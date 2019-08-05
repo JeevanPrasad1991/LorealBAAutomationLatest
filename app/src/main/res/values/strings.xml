@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">LorealBAAutomation</string>
+    <string name="data_uploaded_successfully">Database Uploaded Successfully</string>
+    <string name="errordatabase_not_uploaded">Error in Database Uploading</string>
+    <string name="database_not_uploaded">Database Not Uploaded</string>
+    <string name="title_activity_download">DownloadActivity</string>
+    <string name="nonetwork"> No Network Connection. Please Check Your Internet Connection</string>
+    <string name="previous_data_upload">Please Upload Previous Data First</string>
+    <string name="want_download_data">Do you want to Download Data?</string>
+    <string name="title_activity_counter_login">CounterLogin</string>
+    <string name="notsuppoted">This device is not supported.</string>
+
+</resources>
