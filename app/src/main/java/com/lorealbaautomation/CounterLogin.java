@@ -105,6 +105,7 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 11;
     private static final int MY_PERMISSIONS_REQUEST_STORAGE_READ = 12;
     private static final int MY_PERMISSIONS_REQUEST_STORAGE_WRITE = 14;
+    
 
 
 
