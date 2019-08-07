@@ -12,6 +12,23 @@
         android:resizeable="true"
         android:smallScreens="true"
         android:xlargeScreens="true" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:allowBackup="true"
@@ -19,11 +36,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".UserLoginActivity"
+            android:label="@string/title_activity_user_login"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".AutoUpdateActivity"
+            android:label="@string/title_activity_auto_update"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".EmiLoginActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".dailyactivity.CounterImageActivity"></activity>
         <activity
             android:name=".DealarBoardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".download.DownloadActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
@@ -35,7 +67,17 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Declaring Service in Manifest -->
+        </activity>
+        <activity
+            android:name=".CounterLoginActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyACo6bETG8lE-PrcerzkZKNCUuIeKY6v6A" /> <!-- Declaring Service in Manifest -->
         <service
             android:name=".downloadService.DownloadService"
             android:exported="false" />

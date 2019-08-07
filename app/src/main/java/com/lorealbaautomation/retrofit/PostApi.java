@@ -18,7 +18,7 @@ import retrofit2.http.POST;
 
 //using interface for post data
 public interface PostApi {
-    @POST(CommonString.KEY_LOGIN_DETAILS)
+    @POST("CounterDeviceLogin")
     Call<ResponseBody> getLogindetail(@Body RequestBody request);
 
     @POST("DownloadJson")

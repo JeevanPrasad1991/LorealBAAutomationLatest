@@ -9,6 +9,7 @@ import android.os.Environment;
 public class CommonString {
     //preference
     public static final String KEY_USERNAME = "USERNAME";
+    public static final String KEY_COUNTER_ID = "COUNTER_ID";
     public static final String KEY_PASSWORD = "PASSWORD";
     public static final String KEY_STATUS = "STATUS";
     public static final String KEY_QUESTION_CD = "question_cd";
@@ -78,8 +79,6 @@ public class CommonString {
     public static final String KEY_USER_ID = "USER_ID";
     public static final String KEY_ID = "ID";
     public static final String KEY_COUNTER_NAME = "COUNTER_NAME";
-    public static final String KEY_COUNTER_ID = "COUNTER_ID";
-
 
     public static final String TABLE_NOTIFICATION_DATA = "Notification_Data";
     public static final String KEY_TITLE = "Title";

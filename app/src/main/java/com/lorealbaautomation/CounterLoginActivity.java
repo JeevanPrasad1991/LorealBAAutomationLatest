@@ -1,9 +1,7 @@
 package com.lorealbaautomation;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,25 +11,21 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -46,20 +40,17 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 import com.lorealbaautomation.Get_IMEI_number.ImeiNumberClass;
+import com.lorealbaautomation.constant.AlertandMessages;
+import com.lorealbaautomation.constant.CommonString;
+import com.lorealbaautomation.retrofit.PostApi;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -73,13 +64,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CounterLogin extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-
+public class CounterLoginActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    Toolbar toolbar;
+    String str_counter_id="";
+    EditText counter_id;
+    Button btncontinue;
     private String[] imeiNumbers;
     private String app_ver;
     private Context context;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
-    private ImeiNumberClass imei;
     ProgressDialog loading;
     private Retrofit adapter;
     private SharedPreferences preferences = null;
@@ -88,7 +81,6 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
     private double lon = 0.0;
     private int versionCode;
     private String manufacturer;
-    
     private String model;
     LocationManager locationManager;
     private String os_version;
@@ -100,30 +92,21 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
-
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 10;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 11;
     private static final int MY_PERMISSIONS_REQUEST_STORAGE_READ = 12;
     private static final int MY_PERMISSIONS_REQUEST_STORAGE_WRITE = 14;
-    
+    private ImeiNumberClass imei;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_counter_login);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_counter);
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_PHONE_STATE},
-                    PERMISSIONS_REQUEST_READ_PHONE_STATE);
-        } else {
-            imeiNumbers = imei.getDeviceImei();
-        }
-        getDeviceName();
+        getViewId();
+
 
     }
     @Override
@@ -237,13 +220,13 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
 
         boolean permission_flag = false;
         // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(CounterLogin.this,
+        if (ContextCompat.checkSelfPermission(CounterLoginActivity.this,
                 permission)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Permission is not granted
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(CounterLogin.this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(CounterLoginActivity.this,
                     permission)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
@@ -251,7 +234,7 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
                 showOnPermissiondenied(Manifest.permission.CAMERA, MY_PERMISSIONS_REQUEST_CAMERA, 1);
             } else {
                 // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(CounterLogin.this,
+                ActivityCompat.requestPermissions(CounterLoginActivity.this,
                         new String[]{permission},
                         requestCode);
 
@@ -310,7 +293,7 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
         }
     }
     void showOnPermissiondenied(final String permissionsRequired, final int request_code, final int check) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(CounterLogin.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CounterLoginActivity.this);
         builder.setTitle("Need Multiple Permissions");
         builder.setMessage("This app needs Camera, Storage and Location permissions.");
         builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
@@ -320,7 +303,7 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
                 if (check == 0) {
                     checkAppPermission(permissionsRequired, request_code);
                 } else {
-                    ActivityCompat.requestPermissions(CounterLogin.this,
+                    ActivityCompat.requestPermissions(CounterLoginActivity.this,
                             new String[]{permissionsRequired},
                             request_code);
                 }
@@ -364,15 +347,12 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-/*
     private void AttempLogin() {
         try {
-            loading = ProgressDialog.show(CounterLogin.this, "Processing", "Please wait...", false, false);
+            loading = ProgressDialog.show(CounterLoginActivity.this, "Processing", "Please wait...", false, false);
             versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("Userid", userid);
-            jsonObject.put("Password", password);
-            jsonObject.put("Intime", getCurrentTime());
+
             jsonObject.put("Latitude", lat);
             jsonObject.put("Longitude", lon);
             jsonObject.put("Appversion", app_ver);
@@ -381,16 +361,13 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
             jsonObject.put("Manufacturer", manufacturer);
             jsonObject.put("ModelNumber", model);
             jsonObject.put("OSVersion", os_version);
+            jsonObject.put("CounterId", str_counter_id);
 
-            if (!imei1.equals("") && !imei2.equals("")) {
-                jsonObject.put("IMEINumber1", imei1);
-                jsonObject.put("IMEINumber2", imei2);
-            } else if (!imei1.equals("") || imei2.equals("")) {
-                jsonObject.put("IMEINumber1", imei1);
-                jsonObject.put("IMEINumber2", "0");
+
+            if (imeiNumbers.length > 0) {
+                jsonObject.put("IMEINumber1", imeiNumbers[0]);
             } else {
                 jsonObject.put("IMEINumber1", "0");
-                jsonObject.put("IMEINumber2", "0");
             }
 
             String jsonString = jsonObject.toString();
@@ -417,45 +394,63 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
                             try {
                                 data = response.body().string();
                                 data = data.substring(1, data.length() - 1).replace("\\", "");
-                                if (data.contains("Changed")) {
+                                if (data.contains("0")) {
                                     loading.dismiss();
-                                    AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_CHANGED);
-                                } else if (data.contains("No data")) {
-                                    loading.dismiss();
-                                    AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_LOGIN_NO_DATA);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setTitle("Parinaam");
+                                    builder.setMessage("Wrong IMEI number Please contact to Administer").setCancelable(false)
+                                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.dismiss();
 
-                                } else if (data.equalsIgnoreCase(CommonString.KEY_FAILURE)) {
-                                    AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.KEY_FAILURE + " Please try again");
+
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                  //  finish();
+
+                                }  else if (data.equalsIgnoreCase(CommonString.KEY_FAILURE)) {
+                                    AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.KEY_FAILURE + " Please try again");
                                     loading.dismiss();
+                                } else if (data.contains("-1")) {
+
+                                    //AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.KEY_FAILURE + " wrong counter ");
+                                    loading.dismiss();
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setTitle("Parinaam");
+                                    builder.setMessage("wrong counter").setCancelable(false)
+                                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.dismiss();
+
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                    finish();
                                 } else {
-                                    Gson gson = new Gson();
-                                    LoginGsonGetterSetter userObject = gson.fromJson(data, LoginGsonGetterSetter.class);
-                                    // PUT IN PREFERENCES
-                                    Crashlytics.setUserIdentifier(userid);
-                                    editor.putString(CommonString.KEY_USERNAME, userid);
-                                    editor.putString(CommonString.KEY_PASSWORD, password);
-                                    editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getResult().get(0).getAppVersion()));
-                                    editor.putString(CommonString.KEY_PATH, userObject.getResult().get(0).getAppPath());
-                                    editor.putString(CommonString.KEY_DATE, userObject.getResult().get(0).getCurrentdate());
-                                    Date initDate = new SimpleDateFormat("MM/dd/yyyy").parse(userObject.getResult().get(0).getCurrentdate());
-                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                                    String parsedDate = formatter.format(initDate);
-                                    editor.putString(CommonString.KEY_USER_TYPE, userObject.getResult().get(0).getRightname());
+                                    if (preferences.getString(CommonString.KEY_VERSION, "").equals(Integer.toString(versionCode))) {
 
-                                    editor.putString(CommonString.KEY_YYYYMMDD_DATE, parsedDate);
-                                    editor.putString(CommonString.KEY_NOTICE_BOARD_LINK, userObject.getResult().get(0).getNotice_board());
+                                        editor.putString(CommonString.KEY_COUNTER_ID, data);
+                                        editor.commit();
+                                        Intent intent = new Intent(getBaseContext(), UserLoginActivity.class);
+                                        startActivity(intent);
+                                        CounterLoginActivity.this.finish();
 
-                                    //date is changed for previous day data
-                                    //editor.putString(CommonString.KEY_DATE, "11/22/2017");
-                                    editor.commit();
+                                    }else {
+                                        Intent intent = new Intent(getBaseContext(), AutoUpdateActivity.class);
+                                        intent.putExtra(CommonString.KEY_PATH, preferences.getString(CommonString.KEY_PATH, ""));
+                                        startActivity(intent);
+                                        finish();
+                                    }
 
                                 }
 
                             } catch (Exception e) {
                                 loading.dismiss();
                                 e.printStackTrace();
-                                AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
-
+                                AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
 
                             }
                         }
@@ -465,10 +460,9 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         loading.dismiss();
                         if (t instanceof SocketTimeoutException || t instanceof IOException || t instanceof Exception) {
-                            AlertandMessages.showAlertlogin(CounterLogin.this,
-                                    CommonString.MESSAGE_INTERNET_NOT_AVALABLE + "(" + t.getMessage().toString() + ")");
+                            AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.MESSAGE_INTERNET_NOT_AVALABLE + "(" + t.getMessage().toString() + ")");
                         } else {
-                            AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_SOCKETEXCEPTION);
+                            AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.MESSAGE_SOCKETEXCEPTION);
 
                         }
                     }
@@ -477,19 +471,18 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
             } catch (Exception e) {
                 loading.dismiss();
                 e.printStackTrace();
-                AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
+                AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
             }
 
         } catch (PackageManager.NameNotFoundException e) {
             loading.dismiss();
-            AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
+            AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
 
         } catch (JSONException e) {
             loading.dismiss();
-            AlertandMessages.showAlertlogin(CounterLogin.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
+            AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.MESSAGE_SOCKETEXCEPTION + "(" + e.toString() + ")");
         }
     }
-*/
 
     public void getDeviceName() {
         manufacturer = Build.MANUFACTURER;
@@ -563,5 +556,70 @@ public class CounterLogin extends AppCompatActivity implements GoogleApiClient.C
         }
 
     }
+
+    void  getViewId(){
+
+
+        context = this;
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
+        counter_id=(EditText)findViewById(R.id.counter_id);
+        btncontinue=(Button) findViewById(R.id.btncontinue);
+
+        android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.user_login) + " - " + "");
+
+        imei = new ImeiNumberClass(context);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_PHONE_STATE},
+                    PERMISSIONS_REQUEST_READ_PHONE_STATE);
+        } else {
+            imeiNumbers = imei.getDeviceImei();
+        }
+        getDeviceName();
+
+        try {
+            app_ver = String.valueOf(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        btncontinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                str_counter_id = counter_id.getText().toString().trim().replaceAll("[&^<>{}'$]", "");
+                if (str_counter_id.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Please enter Counter Id", Toast.LENGTH_SHORT).show();
+                } else if (CheckNetAvailability()) {
+                    AttempLogin();
+                } else {
+                    Toast.makeText(getApplicationContext(), "No internet connection! try again later", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+
+    }
+
+    public boolean CheckNetAvailability() {
+
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+                .getState() == NetworkInfo.State.CONNECTED
+                || connectivityManager.getNetworkInfo(
+                ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            connected = true;
+        }
+        return connected;
+    }
+
 
 }

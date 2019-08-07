@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
-import com.lorealbaautomation.MainActivity;
+import com.lorealbaautomation.CounterLoginActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,7 +102,7 @@ public class AlertandMessages {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (activityFinish) {
-                            activity.startActivity(new Intent(activity, MainActivity.class));
+                            activity.startActivity(new Intent(activity, CounterLoginActivity.class));
                             activity.finish();
                         } else {
                             dialog.dismiss();
