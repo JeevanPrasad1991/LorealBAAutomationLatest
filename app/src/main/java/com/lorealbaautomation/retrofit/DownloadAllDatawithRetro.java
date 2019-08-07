@@ -16,14 +16,10 @@ import com.lorealbaautomation.constant.AlertandMessages;
 import com.lorealbaautomation.constant.CommonString;
 import com.lorealbaautomation.gettersetter.ReferenceVariablesForDownloadActivity;
 import com.lorealbaautomation.gsonGetterSetter.JCPGetterSetter;
-import com.lorealbaautomation.gsonGetterSetter.JourneyPlan;
 import com.lorealbaautomation.gsonGetterSetter.NonStockReasonGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.NonWorkingReasonGetterSetter;
-import com.lorealbaautomation.gsonGetterSetter.ProductMaster;
 import com.lorealbaautomation.gsonGetterSetter.PromotionMaster;
 import com.lorealbaautomation.gsonGetterSetter.StockDataGetterSetter;
-import com.lorealbaautomation.gsonGetterSetter.StockPwpGwpDataGetterSetter;
-import com.lorealbaautomation.gsonGetterSetter.StockPwpGwpDatum;
 import com.lorealbaautomation.gsonGetterSetter.StockSampleDataGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.StockTesterDataGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.TableStructure;
@@ -41,7 +37,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,20 +60,16 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
     public int listSize = 0;
     int status = 0;
     Lorealba_Database db;
-    ProgressDialog pd;
+    //    ProgressDialog pd;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     String _UserId, date, app_ver;
     int from;
 
-    public DownloadAllDatawithRetro(Context context) {
-        this.context = context;
-    }
-
     public DownloadAllDatawithRetro(Context context, Lorealba_Database db, ProgressDialog pd, int from) {
         this.context = context;
         this.db = db;
-        this.pd = pd;
+        //this.pd = pd;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = preferences.edit();
         date = preferences.getString(CommonString.KEY_DATE, "");
@@ -99,7 +90,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
             jsonString = jsonStringList.get(downloadindex);
             KeyName = KeyNames.get(downloadindex);
             jsonIndex = downloadindex;
-            pd.setMessage("Downloading (" + downloadindex + "/" + listSize + ") \n" + KeyName + "");
+
             RequestBody jsonData = RequestBody.create(MediaType.parse("application/json"), jsonString);
             adapter = new Retrofit.Builder().baseUrl(CommonString.URL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build();
             PostApi api = adapter.create(PostApi.class);
@@ -126,18 +117,27 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                     String isAllTableCreated = createTable(tableStructureObj);
 
                                     if (isAllTableCreated != CommonString.KEY_SUCCESS) {
-                                        pd.dismiss();
                                         AlertandMessages.showAlert((Activity) context, isAllTableCreated + " not created", true);
                                     }
                                 } else {
                                     editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
                                     editor.apply();
                                     switch (finalKeyName) {
+                                        case "BA_List":
+                                            if (!data.contains("No Data")) {
+                                                baListObject = new Gson().fromJson(data, JCPGetterSetter.class);
+                                                if (baListObject != null && !db.insertBalistData(baListObject)) {
+                                                    AlertandMessages.showSnackbarMsg(context, "Ba List data not saved");
+                                                }
+                                            } else {
+                                                throw new java.lang.Exception();
+                                            }
+                                            break;
+
                                         case "Journey_Plan":
                                             if (!data.contains("No Data")) {
                                                 jcpObject = new Gson().fromJson(data, JCPGetterSetter.class);
                                                 if (jcpObject != null && !db.insertJCPData(jcpObject)) {
-                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "JCP data not saved");
                                                 }
                                             } else {
@@ -145,46 +145,69 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             }
                                             break;
 
+                                        case "Mapping_CounterGroup_Brand":
+                                            if (!data.contains("No Data")) {
+                                                mappingCounterGroupBrandObject = new Gson().fromJson(data, JCPGetterSetter.class);
+                                                if (mappingCounterGroupBrandObject != null && !db.insertmappingcountergroupBrand(mappingCounterGroupBrandObject)) {
+                                                    AlertandMessages.showSnackbarMsg(context, "Mapping_CounterGroup_Brand data not saved");
+                                                }
+                                            }
+
+                                            break;
+
                                         case "Product_Master":
                                             if (!data.contains("No Data")) {
                                                 product_masterObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
                                                 if (product_masterObject != null && !db.insertproductmasterdata(product_masterObject)) {
-                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Product Master data not saved");
                                                 }
                                             } else {
                                                 throw new java.lang.Exception();
                                             }
                                             break;
-                                        case "Non_Working_Reason":
+
+                                            case "Mapping_Visibility":
                                             if (!data.contains("No Data")) {
-                                                nonWorkingObj = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
-                                                if (nonWorkingObj != null && !db.insertNonWorkingData(nonWorkingObj)) {
-                                                    pd.dismiss();
-                                                    AlertandMessages.showSnackbarMsg(context, "Non Working Reason not saved");
+                                                mapping_visibilityObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
+                                                if (mapping_visibilityObject != null && !db.insertmappingvisibility(mapping_visibilityObject)) {
+                                                    AlertandMessages.showSnackbarMsg(context, "Mapping_Visibility data not saved");
                                                 }
                                             } else {
                                                 throw new java.lang.Exception();
                                             }
                                             break;
 
-                                        case "Posm_Master":
+                                            case "Master_Posm":
                                             if (!data.contains("No Data")) {
-                                                nonWorkingObj = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
-                                                if (nonWorkingObj != null && !db.insertNonWorkingData(nonWorkingObj)) {
-                                                    pd.dismiss();
-                                                    AlertandMessages.showSnackbarMsg(context, "Non Working Reason not saved");
+                                                posmmasterObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
+                                                if (posmmasterObject != null && !db.insertmappingposmdata(posmmasterObject)) {
+                                                    AlertandMessages.showSnackbarMsg(context, "Master_Posm data not saved");
                                                 }
                                             } else {
                                                 throw new java.lang.Exception();
                                             }
                                             break;
+
+
+                                        case "Non_Working_Reason":
+                                            if (!data.contains("No Data")) {
+                                                nonWorkingObj = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
+                                                if (nonWorkingObj != null && !db.insertNonWorkingData(nonWorkingObj)) {
+                                                    AlertandMessages.showSnackbarMsg(context, "Non Working Reason not saved");
+                                                }
+                                            } else {
+                                                throw new java.lang.Exception();
+                                            }
+
+                                            break;
+
+
 
                                         case "Dashboard_Data":
                                             if (!data.contains("No Data")) {
                                                 dashboardObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (dashboardObject != null && !db.insert_dashboard_data(dashboardObject)) {
-                                                    pd.dismiss();
+                                                    //  pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Dashboard Data not saved");
                                                 }
                                             }
@@ -194,7 +217,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 promotionMasterObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (promotionMasterObject != null && !db.insert_promotion_master(promotionMasterObject)) {
-                                                    pd.dismiss();
+                                                    // pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Promotion Master Data not saved");
                                                 }
                                             }
@@ -204,7 +227,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 nonpromotionReason = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (nonpromotionReason != null && !db.insert_non_promotion_reason(nonpromotionReason)) {
-                                                    pd.dismiss();
+                                                    //  pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Non Promotion Reason Data not saved");
                                                 }
                                             }
@@ -214,7 +237,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 inwardSales_POObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
                                                 if (inwardSales_POObject != null && !db.insertInwordSalesPoData(inwardSales_POObject)) {
-                                                    pd.dismiss();
+                                                    // pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "InwardSales PO Data not saved");
                                                 }
                                             } else {
@@ -226,7 +249,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 reasonObj = new Gson().fromJson(data, NonStockReasonGetterSetter.class);
                                                 if (reasonObj != null && !db.insertNonStockReasonData(reasonObj)) {
-                                                    pd.dismiss();
+                                                    //  pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Non Stock Data not saved");
                                                 }
                                             } else {
@@ -239,7 +262,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 stockDataObj = new Gson().fromJson(data, StockDataGetterSetter.class);
                                                 if (stockDataObj != null && !db.insertStockData(stockDataObj)) {
-                                                    pd.dismiss();
+                                                    //   pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Stock Data not saved");
                                                 }
                                             } else {
@@ -251,7 +274,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 stockTesterObj = new Gson().fromJson(data, StockTesterDataGetterSetter.class);
                                                 if (stockTesterObj != null && !db.insertStockTesterData(stockTesterObj)) {
-                                                    pd.dismiss();
+                                                    //   pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Stock Tester Data not saved");
                                                 }
                                             } else {
@@ -275,7 +298,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 cst_sales_histryObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (cst_sales_histryObject != null && !db.insertcst_sales_histry(cst_sales_histryObject)) {
-                                                    pd.dismiss();
+                                                    //  pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Consumer Sales History not saved");
                                                 }
                                             }
@@ -284,7 +307,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 attendance_historyObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (attendance_historyObject != null && !db.insert_attendancehistory(attendance_historyObject)) {
-                                                    pd.dismiss();
+                                                    //  pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Attendance History not saved");
                                                 }
                                             }
@@ -294,7 +317,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 salesperformanceObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (salesperformanceObject != null && !db.insert_salesperformance(salesperformanceObject)) {
-                                                    pd.dismiss();
+                                                    // pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Sales Performance not saved");
                                                 }
                                             }
@@ -304,7 +327,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 dashboard_value_achievementObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (dashboard_value_achievementObject != null && !db.insertdashboard_achievement(dashboard_value_achievementObject)) {
-                                                    pd.dismiss();
+                                                    // pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Dashboard_Achivement_Detail not saved");
                                                 }
                                             }
@@ -314,7 +337,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 customer_visited_count_object = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (customer_visited_count_object != null && !db.insert_customer_visited_count(customer_visited_count_object)) {
-                                                    pd.dismiss();
+                                                    //pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Customer_Visited not saved");
                                                 }
                                             }
@@ -324,7 +347,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 customer_visited_curmonth_object = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (customer_visited_curmonth_object != null && !db.insert_customer_info_data(customer_visited_curmonth_object)) {
-                                                    pd.dismiss();
+                                                    //  pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Customer_Visited_CurMonth not saved");
                                                 }
                                             }
@@ -342,7 +365,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                             } else {
                                 editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
                                 editor.apply();
-                                pd.setMessage("Downloading Images");
+                                //pd.setMessage("Downloading Images");
                                 new DownloadImageTask(context, promotionMasterObject).execute();
                             }
 
@@ -350,13 +373,13 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                             e.printStackTrace();
                             editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
                             editor.apply();
-                            pd.dismiss();
+                            // pd.dismiss();
                             AlertandMessages.showAlert((Activity) context, finalKeyName + " Data not found ", true);
                         }
                     } else {
                         editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
                         editor.apply();
-                        pd.dismiss();
+                        //pd.dismiss();
                         AlertandMessages.showAlert((Activity) context, "Error in downloading Data at " + finalKeyName, true);
 
                     }
@@ -365,7 +388,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     isvalid = true;
-                    pd.dismiss();
+                    // pd.dismiss();
                     if (t != null) {
                         AlertandMessages.showAlert((Activity) context, CommonString.MESSAGE_INTERNET_NOT_AVALABLE + "(" + t.toString() + ")", true);
                     } else {
@@ -377,7 +400,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
 
             editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
             editor.apply();
-            pd.setMessage("Downloading Images");
+            // pd.setMessage("Downloading Images");
             new DownloadImageTask(context, promotionMasterObject).execute();
         }
     }
@@ -512,16 +535,15 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (s.equalsIgnoreCase(CommonString.KEY_SUCCESS)) {
-                pd.dismiss();
-                AlertandMessages.showAlert((Activity) context, "All data downloaded Successfully", true);
+               /* Intent in = new Intent(context, DealarBoardActivity.class);
+                context.startActivity(in);*/
+                //   AlertandMessages.showAlert((Activity) context, "All data downloaded Successfully", true);
             } else {
-                pd.dismiss();
                 AlertandMessages.showAlert((Activity) context, "Error in downloading", true);
             }
-
         }
-
     }
+
 
     void downloadImages(NonWorkingReasonGetterSetter promotion_object) throws IOException, FileNotFoundException {
         List<PromotionMaster> data = promotion_object.getPromotionMaster();

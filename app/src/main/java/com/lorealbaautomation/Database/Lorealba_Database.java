@@ -14,6 +14,7 @@ import com.lorealbaautomation.constant.CommonString;
 import com.lorealbaautomation.delegates.CoverageBean;
 import com.lorealbaautomation.gsonGetterSetter.AttendanceHistory;
 import com.lorealbaautomation.gsonGetterSetter.AuditQuestion;
+import com.lorealbaautomation.gsonGetterSetter.BaListGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.ConsumerSalesHistory;
 import com.lorealbaautomation.gsonGetterSetter.CustomerVisited;
 import com.lorealbaautomation.gsonGetterSetter.CustomerVisitedCurMonth;
@@ -23,6 +24,9 @@ import com.lorealbaautomation.gsonGetterSetter.InvoiceGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.InwardSalesPO;
 import com.lorealbaautomation.gsonGetterSetter.JCPGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.JourneyPlan;
+import com.lorealbaautomation.gsonGetterSetter.MappingCounterGroupBrand;
+import com.lorealbaautomation.gsonGetterSetter.MappingVisibility;
+import com.lorealbaautomation.gsonGetterSetter.MasterPosm;
 import com.lorealbaautomation.gsonGetterSetter.NonPromotionReason;
 import com.lorealbaautomation.gsonGetterSetter.NonStockReason;
 import com.lorealbaautomation.gsonGetterSetter.NonStockReasonGetterSetter;
@@ -87,7 +91,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
             db.delete(CommonString.TABLE_COVERAGE_DATA, CommonString.KEY_STORE_ID + "='" + storeid + "'", null);
 
 
-           } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -140,7 +144,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
 
 
     public boolean insertJCPData(JCPGetterSetter data) {
-        db.delete("Journey_Plan", null, null);
+        db.delete("Mapping_JourneyPlan", null, null);
         List<JourneyPlan> jcpList = data.getJourneyPlan();
 
         ContentValues values = new ContentValues();
@@ -153,31 +157,89 @@ public class Lorealba_Database extends SQLiteOpenHelper {
 
                 values.put("StoreId", jcpList.get(i).getStoreId());
                 values.put("CounterId", jcpList.get(i).getCounterId());
-                values.put("VisitDate", jcpList.get(i).getVisitDate());
+                values.put("EmpId", jcpList.get(i).getEmpId());
+                values.put("ChainId", jcpList.get(i).getChainId());
+                values.put("ChainName", jcpList.get(i).getChainName());
                 values.put("StoreName", jcpList.get(i).getStoreName());
-                values.put("DistributorName", jcpList.get(i).getDistributorName());
                 values.put("Address", jcpList.get(i).getAddress());
+                values.put("Location", jcpList.get(i).getLocation());
                 values.put("Landmark", jcpList.get(i).getLandmark());
-                values.put("Pincode", jcpList.get(i).getPincode());
-                values.put("ContactPerson", jcpList.get(i).getContactPerson());
-                values.put("ContactNo", jcpList.get(i).getContactNo());
+                values.put("CityId", jcpList.get(i).getCityId());
                 values.put("CityName", jcpList.get(i).getCityName());
-                values.put("StoreTypeName", jcpList.get(i).getStoreTypeName());
-                values.put("StoreCategoryName", jcpList.get(i).getStoreCategoryName());
-                values.put("StateId", jcpList.get(i).getStateId());
+                values.put("CounterName", jcpList.get(i).getCounterName());
+                values.put("IMEI", jcpList.get(i).getIMEI());
+                values.put("ChannelId", jcpList.get(i).getChannelId());
+                values.put("ChannelName", jcpList.get(i).getChannelName());
                 values.put("StoreTypeId", jcpList.get(i).getStoreTypeId());
-                values.put("ClassificationId", jcpList.get(i).getClassificationId());
-                values.put("StoreCategoryId", jcpList.get(i).getStoreCategoryId());
-                values.put("ReasonId", jcpList.get(i).getReasonId());
-                values.put("Upload_Status", jcpList.get(i).getUploadStatus());
-                values.put("Geo_Tag", jcpList.get(i).getGeoTag());
-                values.put("DistributorId", jcpList.get(i).getDistributorId());
-                values.put("GeoFencing", jcpList.get(i).getGeoFencing());
-                values.put("StoreCode", jcpList.get(i).getStoreCode());
-                values.put("ClassificationName", jcpList.get(i).getClassificationName());
-                values.put("Latitude", jcpList.get(i).getLatitude());
-                values.put("Longitude", jcpList.get(i).getLongitude());
-                long id = db.insert("Journey_Plan", null, values);
+                values.put("StoreTypeName", jcpList.get(i).getStoreTypeName());
+                values.put("ClassId", jcpList.get(i).getClassId());
+                values.put("ClassName", jcpList.get(i).getClassName());
+                values.put("CounterGroupId", jcpList.get(i).getCounterGroupId());
+                values.put("CounterUploadStatus", jcpList.get(i).getCounterUploadStatus());
+                values.put("BAUploadStatus", jcpList.get(i).getBAUploadStatus());
+                values.put("MID", jcpList.get(i).getMID());
+                values.put("BID", jcpList.get(i).getBID());
+                long id = db.insert("Mapping_JourneyPlan", null, values);
+                if (id == -1) {
+                    throw new Exception();
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.d("Exception in Jcp", ex.toString());
+            return false;
+        }
+    }
+
+
+    public boolean insertBalistData(JCPGetterSetter data) {
+        db.delete("BA_List", null, null);
+        List<BaListGetterSetter> baList = data.getBAList();
+
+        ContentValues values = new ContentValues();
+        try {
+            if (baList.size() == 0) {
+                return false;
+            }
+
+            for (int i = 0; i < baList.size(); i++) {
+
+                values.put("EmpId", baList.get(i).getEmpId());
+                values.put("UserName", baList.get(i).getUserName());
+                values.put("DesignationId", baList.get(i).getDesignationId());
+                values.put("DesignationName", baList.get(i).getDesignationName());
+                values.put("VisitDate", baList.get(i).getVisitDate());
+
+                long id = db.insert("BA_List", null, values);
+                if (id == -1) {
+                    throw new Exception();
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.d("Exception in Jcp", ex.toString());
+            return false;
+        }
+    }
+
+
+    public boolean insertmappingcountergroupBrand(JCPGetterSetter data) {
+        db.delete("Mapping_CounterGroup_Brand", null, null);
+        List<MappingCounterGroupBrand> baList = data.getMappingCounterGroupBrand();
+        ContentValues values = new ContentValues();
+        try {
+            if (baList.size() == 0) {
+                return false;
+            }
+
+            for (int i = 0; i < baList.size(); i++) {
+
+                values.put("CounterGroupId", baList.get(i).getCounterGroupId());
+                values.put("BrandId", baList.get(i).getBrandId());
+
+                long id = db.insert("Mapping_CounterGroup_Brand", null, values);
                 if (id == -1) {
                     throw new Exception();
                 }
@@ -199,11 +261,13 @@ public class Lorealba_Database extends SQLiteOpenHelper {
             if (productList.size() == 0) {
                 return false;
             }
+
             for (int i = 0; i < productList.size(); i++) {
+
                 values.put("ProductId", productList.get(i).getProductId());
                 values.put("LorealCode", productList.get(i).getLorealCode());
                 values.put("ProductName", productList.get(i).getProductName());
-                values.put("ProductType", productList.get(i).getProductType());
+
                 values.put("NuanceId", productList.get(i).getNuanceId());
                 values.put("NuanceName", productList.get(i).getNuanceName());
                 values.put("SubAxeId", productList.get(i).getSubAxeId());
@@ -220,7 +284,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
                 values.put("SignatureName", productList.get(i).getSignatureName());
                 values.put("EanCode", productList.get(i).getEanCode());
                 values.put("Mrp", productList.get(i).getMrp());
-                values.put("Discount", productList.get(i).getDiscount());
+
                 long id = db.insert("Product_Master", null, values);
                 if (id == -1) {
                     throw new Exception();
@@ -233,6 +297,62 @@ public class Lorealba_Database extends SQLiteOpenHelper {
             return false;
         }
     }
+
+
+    public boolean insertmappingvisibility(TableStructureGetterSetter data) {
+        db.delete("Mapping_Visibility", null, null);
+        List<MappingVisibility> productList = data.getMappingVisibility();
+        ContentValues values = new ContentValues();
+        try {
+            if (productList.size() == 0) {
+                return false;
+            }
+            for (int i = 0; i < productList.size(); i++) {
+
+                values.put("CounterId", productList.get(i).getCounterId());
+                values.put("PosmId", productList.get(i).getPosmId());
+
+                long id = db.insert("Mapping_Visibility", null, values);
+                if (id == -1) {
+                    throw new Exception();
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.d("Exception in Jcp", ex.toString());
+            return false;
+        }
+    }
+
+    public boolean insertmappingposmdata(TableStructureGetterSetter data) {
+        db.delete("Master_Posm", null, null);
+        List<MasterPosm> productList = data.getMasterPosm();
+        ContentValues values = new ContentValues();
+        try {
+            if (productList.size() == 0) {
+                return false;
+            }
+            for (int i = 0; i < productList.size(); i++) {
+
+                values.put("Posm", productList.get(i).getPosm());
+                values.put("PosmId", productList.get(i).getPosmId());
+                values.put("PosmTypeId", productList.get(i).getPosmTypeId());
+                values.put("RefImage", productList.get(i).getRefImage());
+
+                long id = db.insert("Master_Posm", null, values);
+                if (id == -1) {
+                    throw new Exception();
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.d("Exception in Jcp", ex.toString());
+            return false;
+        }
+    }
+
 
     public ArrayList<ProductMaster> getcategory_fromproduct() {
         Log.d("Fetching", "Storedata--------------->Start<------------");
@@ -291,7 +411,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         ArrayList<ProductMaster> list = new ArrayList<>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("select distinct ProductName,ProductId,EanCode,Mrp,Discount,LorealCode from Product_Master where BrandId='" + brand_Id + "'", null);
+            dbcursor = db.rawQuery("select distinct ProductName,ProductId,EanCode,Mrp,LorealCode from Product_Master where BrandId='" + brand_Id + "'", null);
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
                 while (!dbcursor.isAfterLast()) {
@@ -300,7 +420,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
                     sb.setProductId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ProductId")));
                     sb.setEanCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("EanCode")));
                     sb.setMrp(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("Mrp")));
-                    sb.setDiscount(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Discount")));
+
                     sb.setLorealCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("LorealCode")));
                     list.add(sb);
                     dbcursor.moveToNext();
@@ -322,7 +442,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         ArrayList<ProductMaster> list = new ArrayList<>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("select distinct ProductName,ProductId,EanCode,Mrp,Discount from Product_Master where EanCode='" + ean_code + "'", null);
+            dbcursor = db.rawQuery("select distinct ProductName,ProductId,EanCode,Mrp from Product_Master where EanCode='" + ean_code + "'", null);
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
                 while (!dbcursor.isAfterLast()) {
@@ -331,7 +451,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
                     sb.setProductId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ProductId")));
                     sb.setEanCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("EanCode")));
                     sb.setMrp(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("Mrp")));
-                    sb.setDiscount(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Discount")));
+
                     list.add(sb);
                     dbcursor.moveToNext();
                 }
@@ -383,7 +503,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         Cursor dbcursor = null;
 
         try {
-            dbcursor = db.rawQuery("SELECT * FROM Journey_Plan WHERE VisitDate ='" + date + "'", null);
+            dbcursor = db.rawQuery("SELECT * FROM Mapping_JourneyPlan WHERE VisitDate ='" + date + "'", null);
 
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
@@ -391,38 +511,28 @@ public class Lorealba_Database extends SQLiteOpenHelper {
                     JourneyPlan sb = new JourneyPlan();
                     sb.setStoreId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreId"))));
                     sb.setCounterId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterId"))));
-                    sb.setVisitDate((dbcursor.getString(dbcursor.getColumnIndexOrThrow("VisitDate"))));
+                    sb.setEmpId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("EmpId"))));
+                    sb.setChainId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChainId"))));
+                    sb.setChainName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChainName")));
                     sb.setStoreName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreName")));
-                    sb.setDistributorName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("DistributorName")));
                     sb.setAddress((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Address"))));
+                    sb.setLocation((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Location"))));
                     sb.setLandmark(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Landmark")));
-                    sb.setPincode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Pincode")));
-
-                    sb.setContactPerson(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactPerson")));
-                    sb.setContactNo(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactNo")));
+                    sb.setCityId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CityId")));
                     sb.setCityName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CityName")));
-
-                    sb.setStoreTypeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName")));
-                    sb.setStoreCategoryName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCategoryName")));
-                    sb.setStateId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StateId")));
-
+                    sb.setCounterName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterName")));
+                    sb.setIMEI(dbcursor.getString(dbcursor.getColumnIndexOrThrow("IMEI")));
+                    sb.setChannelId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChannelId")));
+                    sb.setChannelName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChannelName")));
                     sb.setStoreTypeId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreTypeId"))));
-                    sb.setStoreCategoryId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreCategoryId"))));
-
-
-                    sb.setReasonId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ReasonId"))));
-                    sb.setGeoTag(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Geo_Tag")));
-                    sb.setUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Upload_Status")));
-                    sb.setDistributorId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("DistributorId")));
-
-
-                    sb.setClassificationId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassificationId"))));
-                    sb.setLatitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Latitude")));
-                    sb.setLongitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Longitude")));
-                    sb.setGeoFencing(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("GeoFencing")));
-                    sb.setStoreCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCode")));
-                    sb.setClassificationName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassificationName")));
-
+                    sb.setStoreTypeName((dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName"))));
+                    sb.setClassId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassId"))));
+                    sb.setClassName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassName")));
+                    sb.setCounterGroupId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterGroupId")));
+                    sb.setCounterUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterUploadStatus")));
+                    sb.setBAUploadStatus((dbcursor.getString(dbcursor.getColumnIndexOrThrow("BAUploadStatus"))));
+                    sb.setMID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("MID")));
+                    sb.setBID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("BID")));
 
                     list.add(sb);
                     dbcursor.moveToNext();
@@ -548,7 +658,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put("Upload_Status", status);
-            l = db.update("Journey_Plan", values, " StoreId ='" + storeid + "' AND VisitDate ='" + visit_date + "'", null);
+            l = db.update("Mapping_JourneyPlan", values, " StoreId ='" + storeid + "' AND VisitDate ='" + visit_date + "'", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -560,7 +670,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         ArrayList<JourneyPlan> list = new ArrayList<JourneyPlan>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("SELECT  * from Journey_Plan  " + "where StoreId ='" + store_cd + "'", null);
+            dbcursor = db.rawQuery("SELECT  * from Mapping_JourneyPlan  " + "where StoreId ='" + store_cd + "'", null);
 
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
@@ -568,38 +678,28 @@ public class Lorealba_Database extends SQLiteOpenHelper {
                     JourneyPlan sb = new JourneyPlan();
                     sb.setStoreId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreId"))));
                     sb.setCounterId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterId"))));
-                    sb.setVisitDate((dbcursor.getString(dbcursor.getColumnIndexOrThrow("VisitDate"))));
+                    sb.setEmpId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("EmpId"))));
+                    sb.setChainId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChainId"))));
+                    sb.setChainName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChainName")));
                     sb.setStoreName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreName")));
-                    sb.setDistributorName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("DistributorName")));
                     sb.setAddress((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Address"))));
+                    sb.setLocation((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Location"))));
                     sb.setLandmark(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Landmark")));
-                    sb.setPincode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Pincode")));
-
-                    sb.setContactPerson(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactPerson")));
-                    sb.setContactNo(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactNo")));
+                    sb.setCityId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CityId")));
                     sb.setCityName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CityName")));
-
-                    sb.setStoreTypeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName")));
-                    sb.setStoreCategoryName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCategoryName")));
-                    sb.setStateId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StateId")));
-
+                    sb.setCounterName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterName")));
+                    sb.setIMEI(dbcursor.getString(dbcursor.getColumnIndexOrThrow("IMEI")));
+                    sb.setChannelId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChannelId")));
+                    sb.setChannelName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChannelName")));
                     sb.setStoreTypeId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreTypeId"))));
-                    sb.setStoreCategoryId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreCategoryId"))));
-
-
-                    sb.setReasonId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ReasonId"))));
-                    sb.setGeoTag(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Geo_Tag")));
-                    sb.setUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Upload_Status")));
-                    sb.setDistributorId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("DistributorId")));
-
-
-                    sb.setClassificationId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassificationId"))));
-                    sb.setLatitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Latitude")));
-                    sb.setLongitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Longitude")));
-                    sb.setGeoFencing(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("GeoFencing")));
-                    sb.setStoreCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCode")));
-                    sb.setClassificationName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassificationName")));
-
+                    sb.setStoreTypeName((dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName"))));
+                    sb.setClassId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassId"))));
+                    sb.setClassName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassName")));
+                    sb.setCounterGroupId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterGroupId")));
+                    sb.setCounterUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterUploadStatus")));
+                    sb.setBAUploadStatus((dbcursor.getString(dbcursor.getColumnIndexOrThrow("BAUploadStatus"))));
+                    sb.setMID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("MID")));
+                    sb.setBID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("BID")));
 
                     list.add(sb);
                     dbcursor.moveToNext();
@@ -964,45 +1064,35 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         ArrayList<JourneyPlan> list = new ArrayList<JourneyPlan>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("SELECT * from Journey_Plan where VisitDate ='" + visit_date + "' AND StoreId='" + store_cd + "'", null);
+            dbcursor = db.rawQuery("SELECT * from Mapping_JourneyPlan where VisitDate ='" + visit_date + "' AND StoreId='" + store_cd + "'", null);
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
                 while (!dbcursor.isAfterLast()) {
                     JourneyPlan sb = new JourneyPlan();
                     sb.setStoreId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreId"))));
                     sb.setCounterId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterId"))));
-                    sb.setVisitDate((dbcursor.getString(dbcursor.getColumnIndexOrThrow("VisitDate"))));
+                    sb.setEmpId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("EmpId"))));
+                    sb.setChainId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChainId"))));
+                    sb.setChainName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChainName")));
                     sb.setStoreName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreName")));
-                    sb.setDistributorName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("DistributorName")));
                     sb.setAddress((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Address"))));
+                    sb.setLocation((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Location"))));
                     sb.setLandmark(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Landmark")));
-                    sb.setPincode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Pincode")));
-
-                    sb.setContactPerson(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactPerson")));
-                    sb.setContactNo(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactNo")));
+                    sb.setCityId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CityId")));
                     sb.setCityName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CityName")));
-
-                    sb.setStoreTypeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName")));
-                    sb.setStoreCategoryName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCategoryName")));
-                    sb.setStateId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StateId")));
-
+                    sb.setCounterName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterName")));
+                    sb.setIMEI(dbcursor.getString(dbcursor.getColumnIndexOrThrow("IMEI")));
+                    sb.setChannelId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChannelId")));
+                    sb.setChannelName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChannelName")));
                     sb.setStoreTypeId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreTypeId"))));
-                    sb.setStoreCategoryId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreCategoryId"))));
-
-
-                    sb.setReasonId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ReasonId"))));
-                    sb.setGeoTag(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Geo_Tag")));
-                    sb.setUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Upload_Status")));
-                    sb.setDistributorId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("DistributorId")));
-
-
-                    sb.setClassificationId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassificationId"))));
-                    sb.setLatitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Latitude")));
-                    sb.setLongitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Longitude")));
-                    sb.setGeoFencing(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("GeoFencing")));
-                    sb.setStoreCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCode")));
-                    sb.setClassificationName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassificationName")));
-
+                    sb.setStoreTypeName((dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName"))));
+                    sb.setClassId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassId"))));
+                    sb.setClassName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassName")));
+                    sb.setCounterGroupId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterGroupId")));
+                    sb.setCounterUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterUploadStatus")));
+                    sb.setBAUploadStatus((dbcursor.getString(dbcursor.getColumnIndexOrThrow("BAUploadStatus"))));
+                    sb.setMID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("MID")));
+                    sb.setBID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("BID")));
                     list.add(sb);
                     dbcursor.moveToNext();
                 }
@@ -1068,45 +1158,35 @@ public class Lorealba_Database extends SQLiteOpenHelper {
 
         try {
 
-            dbcursor = db.rawQuery("SELECT * from Journey_Plan where VisitDate <> '" + date + "' AND StoreId='" + store_id + "'", null);
+            dbcursor = db.rawQuery("SELECT * from Mapping_JourneyPlan where VisitDate <> '" + date + "' AND StoreId='" + store_id + "'", null);
 
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
                 while (!dbcursor.isAfterLast()) {
                     sb.setStoreId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreId"))));
                     sb.setCounterId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterId"))));
-                    sb.setVisitDate((dbcursor.getString(dbcursor.getColumnIndexOrThrow("VisitDate"))));
+                    sb.setEmpId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("EmpId"))));
+                    sb.setChainId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChainId"))));
+                    sb.setChainName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChainName")));
                     sb.setStoreName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreName")));
-                    sb.setDistributorName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("DistributorName")));
                     sb.setAddress((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Address"))));
+                    sb.setLocation((dbcursor.getString(dbcursor.getColumnIndexOrThrow("Location"))));
                     sb.setLandmark(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Landmark")));
-                    sb.setPincode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Pincode")));
-
-                    sb.setContactPerson(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactPerson")));
-                    sb.setContactNo(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ContactNo")));
+                    sb.setCityId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CityId")));
                     sb.setCityName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CityName")));
-
-                    sb.setStoreTypeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName")));
-                    sb.setStoreCategoryName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCategoryName")));
-                    sb.setStateId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StateId")));
-
+                    sb.setCounterName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterName")));
+                    sb.setIMEI(dbcursor.getString(dbcursor.getColumnIndexOrThrow("IMEI")));
+                    sb.setChannelId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ChannelId")));
+                    sb.setChannelName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ChannelName")));
                     sb.setStoreTypeId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreTypeId"))));
-                    sb.setStoreCategoryId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("StoreCategoryId"))));
-
-
-                    sb.setReasonId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ReasonId"))));
-                    sb.setGeoTag(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Geo_Tag")));
-                    sb.setUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Upload_Status")));
-                    sb.setDistributorId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("DistributorId")));
-
-
-                    sb.setClassificationId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassificationId"))));
-                    sb.setLatitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Latitude")));
-                    sb.setLongitude(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Longitude")));
-                    sb.setGeoFencing(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("GeoFencing")));
-                    sb.setStoreCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreCode")));
-                    sb.setClassificationName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassificationName")));
-
+                    sb.setStoreTypeName((dbcursor.getString(dbcursor.getColumnIndexOrThrow("StoreTypeName"))));
+                    sb.setClassId((dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ClassId"))));
+                    sb.setClassName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ClassName")));
+                    sb.setCounterGroupId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("CounterGroupId")));
+                    sb.setCounterUploadStatus(dbcursor.getString(dbcursor.getColumnIndexOrThrow("CounterUploadStatus")));
+                    sb.setBAUploadStatus((dbcursor.getString(dbcursor.getColumnIndexOrThrow("BAUploadStatus"))));
+                    sb.setMID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("MID")));
+                    sb.setBID(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("BID")));
                     dbcursor.moveToNext();
                 }
                 dbcursor.close();
@@ -1127,7 +1207,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         try {
             values.put("GEO_TAG", status);
-            db.update("Journey_Plan", values, CommonString.KEY_STORE_ID + "='" + id + "'", null);
+            db.update("Mapping_JourneyPlan", values, CommonString.KEY_STORE_ID + "='" + id + "'", null);
         } catch (Exception ex) {
         }
     }
@@ -1810,7 +1890,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     }
 
 
-
     public ArrayList<ProductMaster> getStockInsertedData(String storeId, String subaxeName, String signatureId) {
 
         ArrayList<ProductMaster> list = new ArrayList<>();
@@ -2164,7 +2243,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     }
 
 
-
     public ArrayList<ProductMaster> getbrand_wise_sku_fromStockTesterData(String subaxeName, String sigature_id, String storeId) {
 
         ArrayList<ProductMaster> list = new ArrayList<>();
@@ -2277,8 +2355,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     }
 
 
-
-
     //  Upendra Cpm, [06.05.19 13:08]
     public ArrayList<ProductMaster> getStockUploadData(String store_id, String visit_date) {
         ArrayList<ProductMaster> list = new ArrayList<>();
@@ -2347,7 +2423,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
 
         return list;
     }
-
 
 
     public ArrayList<InwardSalesPO> getInwardUploadData(String store_id, String visit_date) {
@@ -2830,7 +2905,7 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         ArrayList<ProductMaster> list = new ArrayList<>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("SELECT DISTINCT CH.ProductId,CH.ProductName,CH.QtySold,CH.ConsumerName,CH.EanCode,PM.Mrp,CH.VisitDate,PM.Discount" +
+            dbcursor = db.rawQuery("SELECT DISTINCT CH.ProductId,CH.ProductName,CH.QtySold,CH.ConsumerName,CH.EanCode,PM.Mrp,CH.VisitDate" +
                     " FROM Consumer_Sales_History CH INNER JOIN Product_Master PM ON PM.ProductId=CH.ProductId where MobileNumber='" + mobile_no + "' and ReportType='Previous'", null);
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
@@ -2843,7 +2918,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
                     sale.setConsumer_qty(dbcursor.getString(dbcursor.getColumnIndexOrThrow("QtySold")));
                     sale.setEanCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("EanCode")));
                     sale.setMrp(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("Mrp")));
-                    sale.setDiscount(dbcursor.getDouble(dbcursor.getColumnIndexOrThrow("Discount")));
                     list.add(sale);
 
                     dbcursor.moveToNext();

@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class TableStructure {
-
+    @SerializedName("SqlText")
     @Expose
     private String sqlText;
 
@@ -16,5 +16,4 @@ public class TableStructure {
     public void setSqlText(String sqlText) {
         this.sqlText = sqlText;
     }
-
 }

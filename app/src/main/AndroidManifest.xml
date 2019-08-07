@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lorealbaautomation">
-
     <!-- Internet permission, as we are accessing data from server -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- android:name=".MainMenuActivity" -->
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
 
     <application
         android:allowBackup="true"
@@ -14,19 +19,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-
         android:theme="@style/AppTheme">
-
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".dailyactivity.CounterImageActivity"></activity>
+        <activity
+            android:name=".DealarBoardActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".download.DownloadActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Declaring Service in Manifest -->
+        </activity> <!-- Declaring Service in Manifest -->
         <service
             android:name=".downloadService.DownloadService"
             android:exported="false" />

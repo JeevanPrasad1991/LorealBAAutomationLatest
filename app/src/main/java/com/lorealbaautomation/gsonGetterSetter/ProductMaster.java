@@ -3,58 +3,66 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ProductMaster {
+    @SerializedName("ProductId")
     @Expose
     private Integer productId;
+    @SerializedName("LorealCode")
     @Expose
     private String lorealCode;
+    @SerializedName("ProductName")
     @Expose
     private String productName;
-    @Expose
-    private String productType;
+
+    @SerializedName("NuanceId")
     @Expose
     private Integer nuanceId;
+    @SerializedName("NuanceName")
     @Expose
     private String nuanceName;
+    @SerializedName("SubAxeId")
     @Expose
     private Integer subAxeId;
+    @SerializedName("SubAxeName")
     @Expose
     private String subAxeName;
+    @SerializedName("AxeId")
     @Expose
     private Integer axeId;
+    @SerializedName("AxeName")
     @Expose
     private String axeName;
+    @SerializedName("ReferenceId")
     @Expose
     private Integer referenceId;
+    @SerializedName("ReferenceName")
     @Expose
     private String referenceName;
+    @SerializedName("SubBrandId")
     @Expose
     private Integer subBrandId;
+    @SerializedName("SubBrandName")
     @Expose
     private String subBrandName;
+    @SerializedName("BrandId")
     @Expose
     private Integer brandId;
+    @SerializedName("BrandName")
     @Expose
     private String brandName;
+    @SerializedName("SignatureId")
     @Expose
     private Integer signatureId;
+    @SerializedName("SignatureName")
     @Expose
     private String signatureName;
 
+    @SerializedName("EanCode")
     @Expose
     private String eanCode;
+    @SerializedName("Mrp")
     @Expose
     private Integer mrp;
 
-    public Double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Double discount) {
-        this.discount = discount;
-    }
-
-    @Expose
-    private Double discount;
 
     public Integer getProductId() {
         return productId;
@@ -96,13 +104,7 @@ public class ProductMaster {
         this.productName = productName;
     }
 
-    public String getProductType() {
-        return productType;
-    }
 
-    public void setProductType(String productType) {
-        this.productType = productType;
-    }
 
     public Integer getNuanceId() {
         return nuanceId;

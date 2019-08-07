@@ -8,61 +8,75 @@ public class JourneyPlan {
     @SerializedName("StoreId")
     @Expose
     private Integer storeId;
-
+    @SerializedName("CounterId")
     @Expose
     private Integer counterId;
-
+    @SerializedName("EmpId")
     @Expose
-    private String visitDate;
+    private Integer empId;
+    @SerializedName("ChainId")
     @Expose
-    private String distributorName;
+    private Integer chainId;
+    @SerializedName("ChainName")
+    @Expose
+    private String chainName;
+    @SerializedName("StoreName")
     @Expose
     private String storeName;
+    @SerializedName("Address")
     @Expose
     private String address;
+    @SerializedName("Location")
+    @Expose
+    private String location;
+    @SerializedName("Landmark")
     @Expose
     private String landmark;
+    @SerializedName("CityId")
     @Expose
-    private String pincode;
-    @Expose
-    private String contactPerson;
-    @Expose
-    private String contactNo;
+    private Integer cityId;
+    @SerializedName("CityName")
     @Expose
     private String cityName;
+    @SerializedName("CounterName")
     @Expose
-    private String storeTypeName;
+    private String counterName;
+    @SerializedName("IMEI")
     @Expose
-    private String storeCategoryName;
+    private String iMEI;
+    @SerializedName("ChannelId")
     @Expose
-    private Integer stateId;
+    private Integer channelId;
+    @SerializedName("ChannelName")
+    @Expose
+    private String channelName;
+    @SerializedName("StoreTypeId")
     @Expose
     private Integer storeTypeId;
+    @SerializedName("StoreTypeName")
     @Expose
-    private Integer storeCategoryId;
-    @SerializedName("ReasonId")
+    private String storeTypeName;
+    @SerializedName("ClassId")
     @Expose
-    private Integer reasonId;
-    @SerializedName("Upload_Status")
+    private Integer classId;
+    @SerializedName("ClassName")
     @Expose
-    private String uploadStatus;
+    private String className;
+    @SerializedName("CounterGroupId")
     @Expose
-    private String geoTag;
-    @SerializedName("DistributorId")
+    private Integer counterGroupId;
+    @SerializedName("CounterUploadStatus")
     @Expose
-    private Integer distributorId;
+    private String counterUploadStatus;
+    @SerializedName("BAUploadStatus")
     @Expose
-    private Integer classificationId;
+    private String bAUploadStatus;
+    @SerializedName("MID")
     @Expose
-    private Double latitude;
+    private Integer mID;
+    @SerializedName("BID")
     @Expose
-    private Double longitude;
-    @Expose
-    private Integer geoFencing;
-    @Expose
-    private String storeCode;
-    @Expose
-    private String classificationName;
+    private Integer bID;
 
     public Integer getStoreId() {
         return storeId;
@@ -72,9 +86,6 @@ public class JourneyPlan {
         this.storeId = storeId;
     }
 
-    public String getVisitDate() {
-        return visitDate;
-    }
     public Integer getCounterId() {
         return counterId;
     }
@@ -83,16 +94,28 @@ public class JourneyPlan {
         this.counterId = counterId;
     }
 
-    public void setVisitDate(String visitDate) {
-        this.visitDate = visitDate;
+    public Integer getEmpId() {
+        return empId;
     }
 
-    public String getDistributorName() {
-        return distributorName;
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
     }
 
-    public void setDistributorName(String distributorName) {
-        this.distributorName = distributorName;
+    public Integer getChainId() {
+        return chainId;
+    }
+
+    public void setChainId(Integer chainId) {
+        this.chainId = chainId;
+    }
+
+    public String getChainName() {
+        return chainName;
+    }
+
+    public void setChainName(String chainName) {
+        this.chainName = chainName;
     }
 
     public String getStoreName() {
@@ -111,6 +134,14 @@ public class JourneyPlan {
         this.address = address;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getLandmark() {
         return landmark;
     }
@@ -119,28 +150,12 @@ public class JourneyPlan {
         this.landmark = landmark;
     }
 
-    public String getPincode() {
-        return pincode;
+    public Integer getCityId() {
+        return cityId;
     }
 
-    public void setPincode(String pincode) {
-        this.pincode = pincode;
-    }
-
-    public String getContactPerson() {
-        return contactPerson;
-    }
-
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
-    }
-
-    public String getContactNo() {
-        return contactNo;
-    }
-
-    public void setContactNo(String contactNo) {
-        this.contactNo = contactNo;
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
     }
 
     public String getCityName() {
@@ -151,28 +166,36 @@ public class JourneyPlan {
         this.cityName = cityName;
     }
 
-    public String getStoreTypeName() {
-        return storeTypeName;
+    public String getCounterName() {
+        return counterName;
     }
 
-    public void setStoreTypeName(String storeTypeName) {
-        this.storeTypeName = storeTypeName;
+    public void setCounterName(String counterName) {
+        this.counterName = counterName;
     }
 
-    public String getStoreCategoryName() {
-        return storeCategoryName;
+    public String getIMEI() {
+        return iMEI;
     }
 
-    public void setStoreCategoryName(String storeCategoryName) {
-        this.storeCategoryName = storeCategoryName;
+    public void setIMEI(String iMEI) {
+        this.iMEI = iMEI;
     }
 
-    public Integer getStateId() {
-        return stateId;
+    public Integer getChannelId() {
+        return channelId;
     }
 
-    public void setStateId(Integer stateId) {
-        this.stateId = stateId;
+    public void setChannelId(Integer channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     public Integer getStoreTypeId() {
@@ -183,92 +206,68 @@ public class JourneyPlan {
         this.storeTypeId = storeTypeId;
     }
 
-    public Integer getStoreCategoryId() {
-        return storeCategoryId;
+    public String getStoreTypeName() {
+        return storeTypeName;
     }
 
-    public void setStoreCategoryId(Integer storeCategoryId) {
-        this.storeCategoryId = storeCategoryId;
+    public void setStoreTypeName(String storeTypeName) {
+        this.storeTypeName = storeTypeName;
     }
 
-    public Integer getReasonId() {
-        return reasonId;
+    public Integer getClassId() {
+        return classId;
     }
 
-    public void setReasonId(Integer reasonId) {
-        this.reasonId = reasonId;
+    public void setClassId(Integer classId) {
+        this.classId = classId;
     }
 
-    public String getUploadStatus() {
-        return uploadStatus;
+    public String getClassName() {
+        return className;
     }
 
-    public void setUploadStatus(String uploadStatus) {
-        this.uploadStatus = uploadStatus;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
-    public String getGeoTag() {
-        return geoTag;
+    public Integer getCounterGroupId() {
+        return counterGroupId;
     }
 
-    public void setGeoTag(String geoTag) {
-        this.geoTag = geoTag;
+    public void setCounterGroupId(Integer counterGroupId) {
+        this.counterGroupId = counterGroupId;
     }
 
-    public Integer getDistributorId() {
-        return distributorId;
+    public String getCounterUploadStatus() {
+        return counterUploadStatus;
     }
 
-    public void setDistributorId(Integer distributorId) {
-        this.distributorId = distributorId;
+    public void setCounterUploadStatus(String counterUploadStatus) {
+        this.counterUploadStatus = counterUploadStatus;
     }
 
-    public Integer getClassificationId() {
-        return classificationId;
+    public String getBAUploadStatus() {
+        return bAUploadStatus;
     }
 
-    public void setClassificationId(Integer classificationId) {
-        this.classificationId = classificationId;
+    public void setBAUploadStatus(String bAUploadStatus) {
+        this.bAUploadStatus = bAUploadStatus;
     }
 
-    public Double getLatitude() {
-        return latitude;
+    public Integer getMID() {
+        return mID;
     }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+    public void setMID(Integer mID) {
+        this.mID = mID;
     }
 
-    public Double getLongitude() {
-        return longitude;
+    public Integer getBID() {
+        return bID;
     }
 
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Integer getGeoFencing() {
-        return geoFencing;
-    }
-
-    public void setGeoFencing(Integer geoFencing) {
-        this.geoFencing = geoFencing;
-    }
-
-    public String getStoreCode() {
-        return storeCode;
-    }
-
-    public void setStoreCode(String storeCode) {
-        this.storeCode = storeCode;
-    }
-
-    public String getClassificationName() {
-        return classificationName;
-    }
-
-    public void setClassificationName(String classificationName) {
-        this.classificationName = classificationName;
+    public void setBID(Integer bID) {
+        this.bID = bID;
     }
 
 }

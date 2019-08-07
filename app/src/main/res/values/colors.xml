@@ -6,4 +6,7 @@
     <color name="white">#FFFFFF</color>
     <color name="red_dark">#BC080C</color>
     <color name="text_grey_color">#c8c3c3</color>
+    <color name="black">#000000</color>
+    <color name="dashboard_ach">#BCC12A</color>
+    <color name="dashboard_less_ach">#297794</color>
 </resources>
