@@ -4,9 +4,29 @@
 
 
     <item
-        android:id="@+id/action_notification1"
-        android:title="action_notification"
-        app:showAsAction="always">
+        android:id="@+id/notification_img_nav"
+        android:icon="@mipmap/notification"
+        android:title=""
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/user_logout"
+        android:icon="@mipmap/user_icon"
+        android:title=""
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/logout_toolbar"
+                android:orderInCategory="100"
+                android:title="Logout" />
+        </menu>
+    </item>
+
+
+    <item
+        android:id="@+id/user_info"
+        android:icon="@mipmap/menu_icon"
+        android:title=""
+        app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/profile"
@@ -38,6 +58,4 @@
                 android:title="LOGOUT" />
         </menu>
     </item>
-
-
 </menu>

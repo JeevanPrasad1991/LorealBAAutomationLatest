@@ -20,6 +20,7 @@ import com.lorealbaautomation.gsonGetterSetter.CustomerVisited;
 import com.lorealbaautomation.gsonGetterSetter.CustomerVisitedCurMonth;
 import com.lorealbaautomation.gsonGetterSetter.DashboardAchivementDetail;
 import com.lorealbaautomation.gsonGetterSetter.DashboardDataGetter;
+import com.lorealbaautomation.gsonGetterSetter.GroomingGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.InvoiceGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.InwardSalesPO;
 import com.lorealbaautomation.gsonGetterSetter.JCPGetterSetter;
@@ -77,7 +78,8 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         try {
             //jeevan
             db.execSQL(CommonString.CREATE_TABLE_COVERAGE_DATA);
-
+            db.execSQL(CommonString.CREATE_TABLE_COUNTER_IMAGE_DATA);
+            db.execSQL(CommonString.CREATE_TABLE_GROOMED_IMAGE_DATA);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1783,23 +1785,29 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<ProductMaster> getcategory_wise_brand_fromStockData(String category_name, String sigature_id) {
-
+    public ArrayList<ProductMaster> getstock_check_axeandsub_axe(String counterGroup_Id) {
         ArrayList<ProductMaster> list = new ArrayList<>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("select distinct SubAxeName from Product_Master where AxeName ='" + category_name + "' AND SignatureId='" + sigature_id + "'", null);
+            dbcursor = db.rawQuery("select distinct AxeId,AxeName,SubAxeId,SubAxeName,BrandName from Product_Master p inner join " +
+                    "(select * from Mapping_CounterGroup_Brand  where CounterGroupId ='" + counterGroup_Id + "'" + ")t" +
+                    " on p.BrandId = t.BrandId", null);
 
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
                 while (!dbcursor.isAfterLast()) {
                     ProductMaster sb = new ProductMaster();
-                    sb.setSubAxeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("SubAxeName")));
 
+                    sb.setAxeId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("AxeId")));
+                    sb.setAxeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("AxeName")));
+                    sb.setSubAxeId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("SubAxeId")));
+                    sb.setSubAxeName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("SubAxeName")));
+                    sb.setBrandName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("BrandName")));
 
                     list.add(sb);
                     dbcursor.moveToNext();
                 }
+
                 dbcursor.close();
                 return list;
             }
@@ -1812,25 +1820,54 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<ProductMaster> getbrand_wise_sku_fromStockData(String subaxeName, String sigature_id, String storeId) {
-
+    public ArrayList<ProductMaster> getsub_brand_name(String counterGroup_Id, String column_name) {
         ArrayList<ProductMaster> list = new ArrayList<>();
         Cursor dbcursor = null;
         try {
-            dbcursor = db.rawQuery("select pm.ProductName,pm.ProductId,pm.EanCode,pm.Mrp,sd.Stock from Product_Master pm " +
-                    "inner join Stock_Data sd on sd.ProductId=pm.ProductId where SubAxeName ='" + subaxeName + "' AND SignatureId='" + sigature_id + "'and sd.StoreId='" + storeId + "'", null);
-
+            dbcursor = db.rawQuery("select distinct " + column_name + " from Product_Master p inner join " +
+                    "(select * from Mapping_CounterGroup_Brand  where CounterGroupId ='" + counterGroup_Id + "'" + ")t" +
+                    " on p.BrandId = t.BrandId", null);
 
             if (dbcursor != null) {
                 dbcursor.moveToFirst();
                 while (!dbcursor.isAfterLast()) {
                     ProductMaster sb = new ProductMaster();
+                    sb.setBrandName(dbcursor.getString(dbcursor.getColumnIndexOrThrow(column_name)));
+                    list.add(sb);
+                    dbcursor.moveToNext();
+                }
 
+                dbcursor.close();
+                return list;
+            }
+        } catch (Exception e) {
+
+            return list;
+        }
+
+        return list;
+    }
+
+
+    public ArrayList<ProductMaster> getbrand_wise_sku_fromStockData(String subAxeId, String axe_Id, String counterGroup_Id) {
+        ArrayList<ProductMaster> list = new ArrayList<>();
+        Cursor dbcursor = null;
+        try {
+            dbcursor = db.rawQuery("select* from Product_Master p inner join " +
+                    "(select * from Mapping_CounterGroup_Brand  where CounterGroupId ='" + counterGroup_Id + "') t" +
+                    " on p.BrandId = t.BrandId " +
+                    "Where p.AxeId='" + axe_Id + "' AND p.SubAxeId='" + subAxeId + "'", null);
+
+            if (dbcursor != null) {
+                dbcursor.moveToFirst();
+                while (!dbcursor.isAfterLast()) {
+                    ProductMaster sb = new ProductMaster();
                     sb.setProductName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("ProductName")));
                     sb.setProductId(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("ProductId")));
                     sb.setEanCode(dbcursor.getString(dbcursor.getColumnIndexOrThrow("EanCode")));
                     sb.setMrp(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("Mrp")));
-                    sb.setStock(dbcursor.getInt(dbcursor.getColumnIndexOrThrow("Stock")));
+                    sb.setStock(0);
+
                     list.add(sb);
                     dbcursor.moveToNext();
                 }
@@ -1846,12 +1883,9 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     }
 
 
-    public void insertStockData(String store_cd, String sigature_id, String visit_date, String category_id,
-                                HashMap<ProductMaster,
-                                        List<ProductMaster>> data, List<ProductMaster> save_listDataHeader) {
+    public void insertStockData(String store_cd, String sigature_id, String visit_date, String category_id, HashMap<ProductMaster, List<ProductMaster>> data, List<ProductMaster> save_listDataHeader) {
         db.delete(CommonString.TABLE_INSERT_HEADER_STOCK_DATA, "AxeName" + "='" + category_id + "' AND SignatureId='" + sigature_id + "'AND STORE_ID='" + store_cd + "'", null);
         db.delete(CommonString.TABLE_STORE_STOCK_CHILD_DATA, "AxeName" + "='" + category_id + "' AND SignatureId='" + sigature_id + "'AND STORE_ID='" + store_cd + "'", null);
-
         ContentValues values = new ContentValues();
         ContentValues values1 = new ContentValues();
 
@@ -3484,6 +3518,88 @@ public class Lorealba_Database extends SQLiteOpenHelper {
             return list;
         }
         return list;
+    }
+
+
+    public long insertcounteruserdata(String counter_id, String user_id, String user_type, String visit_date, JourneyPlan counterimg_object) {
+        db.delete(CommonString.TABLE_COUNTER_IMAGE_DATA, "Counter_Id" + "='" + counter_id + "' And User_Id='" + user_id + "' And Visit_Date='" + visit_date + "'", null);
+        long id = 0;
+        ContentValues values = new ContentValues();
+        try {
+
+            values.put(CommonString.KEY_STORE_ID, counter_id);
+            values.put(CommonString.KEY_USER_ID, user_id);
+            values.put(CommonString.KEY_USER_TYPE, user_type);
+            values.put(CommonString.KEY_VISIT_DATE, visit_date);
+            values.put("Pre_Setup_Img_One", counterimg_object.getPresetup_img_one_str());
+            values.put("Pre_Setup_Img_Two", counterimg_object.getPresetup_img_two_str());
+            values.put("Post_Setup_Img_One", counterimg_object.getPostsetup_img_one_str());
+            values.put("Post_Setup_Img_Two", counterimg_object.getPostsetup_img_two_str());
+
+            id = db.insert(CommonString.TABLE_COUNTER_IMAGE_DATA, null, values);
+
+        } catch (Exception ex) {
+            Log.d("Database Exception ", ex.toString());
+            return 0;
+        }
+        return id;
+    }
+
+
+    public long inseetgroomingdata(String counter_id, String user_id, String user_type, String visit_date, GroomingGetterSetter groomedObject) {
+        db.delete(CommonString.TABLE_GROOMED_IMAGE_DATA, "Counter_Id" + "='" + counter_id + "' And User_Id='" + user_id + "' And Visit_Date='" + visit_date + "'", null);
+        long id = 0;
+        ContentValues values = new ContentValues();
+        try {
+
+            values.put(CommonString.KEY_STORE_ID, counter_id);
+            values.put(CommonString.KEY_USER_ID, user_id);
+            values.put(CommonString.KEY_USER_TYPE, user_type);
+            values.put(CommonString.KEY_VISIT_DATE, visit_date);
+            values.put("Mornning_groomed_img", groomedObject.getMorning_groom_img_str());
+            values.put("Mornning_groomed_time", groomedObject.getMorning_groom_time_str());
+            values.put("Noon_groomed_img", groomedObject.getNoon_groom_img_str());
+            values.put("Noon_groomed_time", groomedObject.getNoon_groom_time_str());
+
+            values.put("Evening_groomed_img", groomedObject.getEvenning_groom_img_str());
+            values.put("Evening_groomed_time", groomedObject.getEvenning_groom_time_str());
+
+            id = db.insert(CommonString.TABLE_GROOMED_IMAGE_DATA, null, values);
+
+        } catch (Exception ex) {
+            Log.d("Database Exception ", ex.toString());
+            return 0;
+        }
+        return id;
+    }
+
+    public GroomingGetterSetter getinserted_groomingdata(String counter_Id, String user_name, String visit_date) {
+
+        GroomingGetterSetter sb = new GroomingGetterSetter();
+        Cursor dbcursor = null;
+        try {
+            dbcursor = db.rawQuery("Select * from " + CommonString.TABLE_GROOMED_IMAGE_DATA + " where Counter_Id='" + counter_Id + "'And User_Id='" + user_name + "'And Visit_Date='" + visit_date + "'", null);
+            if (dbcursor != null) {
+                dbcursor.moveToFirst();
+                while (!dbcursor.isAfterLast()) {
+                    sb.setMorning_groom_img_str(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Mornning_groomed_img")));
+                    sb.setMorning_groom_time_str(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Mornning_groomed_time")));
+                    sb.setNoon_groom_img_str(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Noon_groomed_img")));
+                    sb.setNoon_groom_time_str(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Noon_groomed_time")));
+                    sb.setEvenning_groom_img_str(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Evening_groomed_img")));
+                    sb.setEvenning_groom_time_str(dbcursor.getString(dbcursor.getColumnIndexOrThrow("Evening_groomed_time")));
+
+                    dbcursor.moveToNext();
+                }
+                dbcursor.close();
+                return sb;
+            }
+        } catch (Exception e) {
+
+            return sb;
+        }
+
+        return sb;
     }
 
 

@@ -104,9 +104,7 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counter);
-
         getViewId();
-
 
     }
     @Override

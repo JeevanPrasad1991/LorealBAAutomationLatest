@@ -68,15 +68,15 @@ public class CommonString {
     public static final String KEY_CHECKOUT_IMAGE = "CHECKOUT_IMAGE";
     public static final String KEY_STORE_NAME = "STORE_NAME";
     public static final String KEY_STORE_ADDRESS = "STORE_ADDEESS";
-    public static final String KEY_STORE_ID = "STORE_ID";
-    public static final String KEY_VISIT_DATE = "VISIT_DATE";
+    public static final String KEY_STORE_ID = "Counter_Id";
+    public static final String KEY_VISIT_DATE = "Visit_Date";
     public static final String KEY_LATITUDE = "LATITUDE";
     public static final String KEY_LONGITUDE = "LONGITUDE";
     public static final String KEY_REASON_ID = "REASON_ID";
     public static final String KEY_REASON = "REASON";
     public static final String KEY_IMAGE = "STORE_IMAGE";
     public static final String KEY_COVERAGE_REMARK = "REMARK";
-    public static final String KEY_USER_ID = "USER_ID";
+    public static final String KEY_USER_ID = "User_Id";
     public static final String KEY_ID = "ID";
     public static final String KEY_COUNTER_NAME = "COUNTER_NAME";
 
@@ -100,10 +100,7 @@ public class CommonString {
             + KEY_REASON_ID + " INTEGER,"
             + KEY_COVERAGE_REMARK + " VARCHAR,"
             + KEY_COUNTER_NAME + " VARCHAR,"
-            + KEY_COUNTER_ID + " INTEGER,"
-
             + KEY_REASON + " VARCHAR)";
-
 
     public static final String TABLE_INSERT_AUDIT_OPENINGHEADER_DATA = "AUDIT_OPENINGHEADER_DATA";
 
@@ -327,4 +324,35 @@ public class CommonString {
     public static final String Key_Profile_Image_Url = "Image_Url";
     public static final String Key_Profile_User_Namewith_Designation = "User_With_Designation";
     public static final String Key_Profile_Store_Name = "Profile_Store_Name";
+
+    public static final String TABLE_COUNTER_IMAGE_DATA = "Table_Counter_Image";
+    public static final String CREATE_TABLE_COUNTER_IMAGE_DATA = "CREATE TABLE  IF NOT EXISTS "
+            + TABLE_COUNTER_IMAGE_DATA + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+            + KEY_STORE_ID + " INTEGER, "
+            + KEY_USER_ID + " VARCHAR,"
+            + KEY_USER_TYPE + " VARCHAR,"
+            + KEY_VISIT_DATE + " VARCHAR,"
+            + "Pre_Setup_Img_One" + " VARCHAR,"
+            + "Pre_Setup_Img_Two" + " VARCHAR,"
+            + "Post_Setup_Img_One" + " VARCHAR,"
+            + "Post_Setup_Img_Two" + " VARCHAR)";
+
+
+
+ public static final String TABLE_GROOMED_IMAGE_DATA = "Table_Groomed_Image";
+    public static final String CREATE_TABLE_GROOMED_IMAGE_DATA = "CREATE TABLE  IF NOT EXISTS "
+            + TABLE_GROOMED_IMAGE_DATA + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+            + KEY_STORE_ID + " INTEGER, "
+            + KEY_USER_ID + " VARCHAR,"
+            + KEY_USER_TYPE + " VARCHAR,"
+            + KEY_VISIT_DATE + " VARCHAR,"
+            + "Mornning_groomed_img" + " VARCHAR,"
+            + "Mornning_groomed_time" + " VARCHAR,"
+
+            + "Noon_groomed_img" + " VARCHAR,"
+            + "Noon_groomed_time" + " VARCHAR,"
+
+            + "Evening_groomed_img" + " VARCHAR,"
+            + "Evening_groomed_time" + " VARCHAR)";
+
 }

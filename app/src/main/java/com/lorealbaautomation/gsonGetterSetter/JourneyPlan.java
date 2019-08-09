@@ -270,4 +270,38 @@ public class JourneyPlan {
         this.bID = bID;
     }
 
+    public String getPresetup_img_one_str() {
+        return presetup_img_one_str;
+    }
+
+    public void setPresetup_img_one_str(String presetup_img_one_str) {
+        this.presetup_img_one_str = presetup_img_one_str;
+    }
+
+    public String getPresetup_img_two_str() {
+        return presetup_img_two_str;
+    }
+
+    public void setPresetup_img_two_str(String presetup_img_two_str) {
+        this.presetup_img_two_str = presetup_img_two_str;
+    }
+
+    public String getPostsetup_img_one_str() {
+        return postsetup_img_one_str;
+    }
+
+    public void setPostsetup_img_one_str(String postsetup_img_one_str) {
+        this.postsetup_img_one_str = postsetup_img_one_str;
+    }
+
+    public String getPostsetup_img_two_str() {
+        return postsetup_img_two_str;
+    }
+
+    public void setPostsetup_img_two_str(String postsetup_img_two_str) {
+        this.postsetup_img_two_str = postsetup_img_two_str;
+    }
+
+    String  presetup_img_one_str="",presetup_img_two_str="",postsetup_img_one_str="",postsetup_img_two_str="";
+
 }

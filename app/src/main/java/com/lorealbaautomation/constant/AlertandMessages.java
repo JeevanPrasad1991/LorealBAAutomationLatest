@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.lorealbaautomation.CounterLoginActivity;
+import com.lorealbaautomation.R;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -132,7 +133,4 @@ public class AlertandMessages {
         AlertDialog alert = builder.create();
         alert.show();
     }
-
-
-
 }

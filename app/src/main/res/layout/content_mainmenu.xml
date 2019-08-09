@@ -39,7 +39,7 @@
                     android:padding="@dimen/custom_margin"
                     android:text="@string/dashboard"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_xsmall"
+                    android:textSize="@dimen/text_14sp"
                     android:textStyle="normal" />
 
                 <fragment
@@ -56,7 +56,7 @@
                     android:padding="@dimen/custom_margin"
                     android:text="@string/countermanu"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_xsmall"
+                    android:textSize="@dimen/text_14sp"
                     android:textStyle="normal" />
 
                 <fragment
@@ -73,7 +73,7 @@
                     android:padding="@dimen/custom_margin"
                     android:text="@string/offers"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_xsmall"
+                    android:textSize="@dimen/text_14sp"
                     android:textStyle="normal" />
 
                 <fragment
@@ -91,7 +91,7 @@
                     android:padding="@dimen/custom_margin"
                     android:text="@string/badviser_menu"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_xsmall"
+                    android:textSize="@dimen/text_14sp"
                     android:textStyle="normal" />
 
                 <fragment

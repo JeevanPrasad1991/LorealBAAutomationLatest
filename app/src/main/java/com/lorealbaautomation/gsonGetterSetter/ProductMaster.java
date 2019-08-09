@@ -1,8 +1,9 @@
 package com.lorealbaautomation.gsonGetterSetter;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ProductMaster {
+public class ProductMaster implements Comparable<ProductMaster> {
     @SerializedName("ProductId")
     @Expose
     private Integer productId;
@@ -103,7 +104,6 @@ public class ProductMaster {
     public void setProductName(String productName) {
         this.productName = productName;
     }
-
 
 
     public Integer getNuanceId() {
@@ -218,10 +218,10 @@ public class ProductMaster {
         this.signatureName = signatureName;
     }
 
-    private int stock=0;
-    private int stock_receive=0;
-    private int resion_id=0;
-    private String resion="";
+    private int stock = 0;
+    private int stock_receive = 0;
+    private int resion_id = 0;
+    private String resion = "";
 
 
     public int getResion_id() {
@@ -292,9 +292,11 @@ public class ProductMaster {
     public void setMobile_no(String mobile_no) {
         this.mobile_no = mobile_no;
     }
+
     String mobile_no;
 
-    boolean isSelected=false;
+    boolean isSelected = false;
+
     public boolean isSelected() {
         return isSelected;
     }
@@ -305,5 +307,13 @@ public class ProductMaster {
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
+
+
+    @Override
+    public int compareTo(ProductMaster productMaster) {
+        return 0;
+    }
+
+
 }
 

@@ -91,15 +91,14 @@ public class DownloadActivity extends AppCompatActivity {
 
                 if (jsonList.size() > 0) {
                     ProgressDialog pd = new ProgressDialog(context);
+                    pd.setCancelable(false);
+                    pd.setMessage("Downloading Data" + "(" + "/" + ")");
+                    pd.show();
                     DownloadAllDatawithRetro downloadData = new DownloadAllDatawithRetro(context, db, pd, CommonString.TAG_FROM_CURRENT);
                     downloadData.listSize = jsonList.size();
                     downloadData.downloadDataUniversalWithoutWait(jsonList, KeyNames, downloadindex, CommonString.DOWNLOAD_ALL_SERVICE);
-
-                    Intent in = new Intent(context, DealarBoardActivity.class);
-                    context.startActivity(in);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

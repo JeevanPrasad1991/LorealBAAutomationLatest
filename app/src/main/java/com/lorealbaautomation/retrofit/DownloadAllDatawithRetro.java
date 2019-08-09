@@ -60,7 +60,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
     public int listSize = 0;
     int status = 0;
     Lorealba_Database db;
-    //    ProgressDialog pd;
+    ProgressDialog pd;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     String _UserId, date, app_ver;
@@ -69,7 +69,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
     public DownloadAllDatawithRetro(Context context, Lorealba_Database db, ProgressDialog pd, int from) {
         this.context = context;
         this.db = db;
-        //this.pd = pd;
+        this.pd = pd;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = preferences.edit();
         date = preferences.getString(CommonString.KEY_DATE, "");
@@ -90,7 +90,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
             jsonString = jsonStringList.get(downloadindex);
             KeyName = KeyNames.get(downloadindex);
             jsonIndex = downloadindex;
-
+            pd.setMessage("Downloading (" + downloadindex + "/" + listSize + ") \n" + KeyName + "");
             RequestBody jsonData = RequestBody.create(MediaType.parse("application/json"), jsonString);
             adapter = new Retrofit.Builder().baseUrl(CommonString.URL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build();
             PostApi api = adapter.create(PostApi.class);
@@ -118,6 +118,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
 
                                     if (isAllTableCreated != CommonString.KEY_SUCCESS) {
                                         AlertandMessages.showAlert((Activity) context, isAllTableCreated + " not created", true);
+                                        pd.dismiss();
                                     }
                                 } else {
                                     editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
@@ -128,17 +129,19 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                                 baListObject = new Gson().fromJson(data, JCPGetterSetter.class);
                                                 if (baListObject != null && !db.insertBalistData(baListObject)) {
                                                     AlertandMessages.showSnackbarMsg(context, "Ba List data not saved");
+                                                    pd.dismiss();
                                                 }
                                             } else {
                                                 throw new java.lang.Exception();
                                             }
                                             break;
 
-                                        case "Journey_Plan":
+                                        case "Mapping_JourneyPlan":
                                             if (!data.contains("No Data")) {
                                                 jcpObject = new Gson().fromJson(data, JCPGetterSetter.class);
                                                 if (jcpObject != null && !db.insertJCPData(jcpObject)) {
                                                     AlertandMessages.showSnackbarMsg(context, "JCP data not saved");
+                                                    pd.dismiss();
                                                 }
                                             } else {
                                                 throw new java.lang.Exception();
@@ -150,6 +153,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                                 mappingCounterGroupBrandObject = new Gson().fromJson(data, JCPGetterSetter.class);
                                                 if (mappingCounterGroupBrandObject != null && !db.insertmappingcountergroupBrand(mappingCounterGroupBrandObject)) {
                                                     AlertandMessages.showSnackbarMsg(context, "Mapping_CounterGroup_Brand data not saved");
+                                                    pd.dismiss();
                                                 }
                                             }
 
@@ -160,16 +164,18 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                                 product_masterObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
                                                 if (product_masterObject != null && !db.insertproductmasterdata(product_masterObject)) {
                                                     AlertandMessages.showSnackbarMsg(context, "Product Master data not saved");
+                                                    pd.dismiss();
                                                 }
                                             } else {
                                                 throw new java.lang.Exception();
                                             }
                                             break;
 
-                                            case "Mapping_Visibility":
+                                        case "Mapping_Visibility":
                                             if (!data.contains("No Data")) {
                                                 mapping_visibilityObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
                                                 if (mapping_visibilityObject != null && !db.insertmappingvisibility(mapping_visibilityObject)) {
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Mapping_Visibility data not saved");
                                                 }
                                             } else {
@@ -177,10 +183,11 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             }
                                             break;
 
-                                            case "Master_Posm":
+                                        case "Master_Posm":
                                             if (!data.contains("No Data")) {
                                                 posmmasterObject = new Gson().fromJson(data, TableStructureGetterSetter.class);
                                                 if (posmmasterObject != null && !db.insertmappingposmdata(posmmasterObject)) {
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Master_Posm data not saved");
                                                 }
                                             } else {
@@ -200,7 +207,6 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             }
 
                                             break;
-
 
 
                                         case "Dashboard_Data":
@@ -307,7 +313,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 attendance_historyObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (attendance_historyObject != null && !db.insert_attendancehistory(attendance_historyObject)) {
-                                                    //  pd.dismiss();
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Attendance History not saved");
                                                 }
                                             }
@@ -317,7 +323,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 salesperformanceObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (salesperformanceObject != null && !db.insert_salesperformance(salesperformanceObject)) {
-                                                    // pd.dismiss();
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Sales Performance not saved");
                                                 }
                                             }
@@ -327,7 +333,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 dashboard_value_achievementObject = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (dashboard_value_achievementObject != null && !db.insertdashboard_achievement(dashboard_value_achievementObject)) {
-                                                    // pd.dismiss();
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Dashboard_Achivement_Detail not saved");
                                                 }
                                             }
@@ -337,7 +343,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 customer_visited_count_object = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (customer_visited_count_object != null && !db.insert_customer_visited_count(customer_visited_count_object)) {
-                                                    //pd.dismiss();
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Customer_Visited not saved");
                                                 }
                                             }
@@ -347,7 +353,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                                             if (!data.contains("No Data")) {
                                                 customer_visited_curmonth_object = new Gson().fromJson(data, NonWorkingReasonGetterSetter.class);
                                                 if (customer_visited_curmonth_object != null && !db.insert_customer_info_data(customer_visited_curmonth_object)) {
-                                                    //  pd.dismiss();
+                                                    pd.dismiss();
                                                     AlertandMessages.showSnackbarMsg(context, "Customer_Visited_CurMonth not saved");
                                                 }
                                             }
@@ -365,7 +371,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                             } else {
                                 editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
                                 editor.apply();
-                                //pd.setMessage("Downloading Images");
+                                pd.setMessage("Downloading Images");
                                 new DownloadImageTask(context, promotionMasterObject).execute();
                             }
 
@@ -373,13 +379,13 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                             e.printStackTrace();
                             editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
                             editor.apply();
-                            // pd.dismiss();
+                            pd.dismiss();
                             AlertandMessages.showAlert((Activity) context, finalKeyName + " Data not found ", true);
                         }
                     } else {
                         editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
                         editor.apply();
-                        //pd.dismiss();
+                        pd.dismiss();
                         AlertandMessages.showAlert((Activity) context, "Error in downloading Data at " + finalKeyName, true);
 
                     }
@@ -388,7 +394,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     isvalid = true;
-                    // pd.dismiss();
+                    pd.dismiss();
                     if (t != null) {
                         AlertandMessages.showAlert((Activity) context, CommonString.MESSAGE_INTERNET_NOT_AVALABLE + "(" + t.toString() + ")", true);
                     } else {
@@ -400,7 +406,7 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
 
             editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
             editor.apply();
-            // pd.setMessage("Downloading Images");
+            pd.setMessage("Downloading Images");
             new DownloadImageTask(context, promotionMasterObject).execute();
         }
     }
@@ -421,16 +427,9 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
             status = 0;
             isvalid = false;
             final String[] data_global = {""};
-            final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .readTimeout(20, TimeUnit.SECONDS)
-                    .writeTimeout(20, TimeUnit.SECONDS)
-                    .connectTimeout(20, TimeUnit.SECONDS)
-                    .build();
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().readTimeout(20, TimeUnit.SECONDS).writeTimeout(20, TimeUnit.SECONDS).connectTimeout(20, TimeUnit.SECONDS).build();
             RequestBody jsonData = RequestBody.create(MediaType.parse("application/json"), jsonString);
-            adapter = new Retrofit.Builder()
-                    .baseUrl(CommonString.URL).client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            adapter = new Retrofit.Builder().baseUrl(CommonString.URL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build();
             PostApi api = adapter.create(PostApi.class);
             Call<JsonObject> call = api.getGeotag(jsonData);
             call.enqueue(new Callback<JsonObject>() {
@@ -534,10 +533,9 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            pd.dismiss();
             if (s.equalsIgnoreCase(CommonString.KEY_SUCCESS)) {
-               /* Intent in = new Intent(context, DealarBoardActivity.class);
-                context.startActivity(in);*/
-                //   AlertandMessages.showAlert((Activity) context, "All data downloaded Successfully", true);
+                AlertandMessages.showAlert((Activity) context, "All data downloaded Successfully", true);
             } else {
                 AlertandMessages.showAlert((Activity) context, "Error in downloading", true);
             }
