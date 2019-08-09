@@ -14,19 +14,14 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -37,7 +32,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -55,13 +49,11 @@ import com.google.gson.Gson;
 import com.lorealbaautomation.AutoUpdateActivity;
 import com.lorealbaautomation.Get_IMEI_number.ImeiNumberClass;
 import com.lorealbaautomation.Database.Lorealba_Database;
-import com.lorealbaautomation.DealarBoardActivity;
 import com.lorealbaautomation.R;
-import com.lorealbaautomation.UserLoginActivity;
 import com.lorealbaautomation.constant.AlertandMessages;
 import com.lorealbaautomation.constant.CommonString;
 import com.lorealbaautomation.gettersetter.LoginGetterSetter;
-import com.lorealbaautomation.gettersetter.LoginGsonGetterSetter;
+import com.lorealbaautomation.gsonGetterSetter.BADeviceLoginGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.BaListGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.CounterDeviceLoginGetterSetter;
 import com.lorealbaautomation.password.MPinActivity;
@@ -74,7 +66,6 @@ import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import okhttp3.MediaType;
@@ -594,7 +585,7 @@ public class TabLoginActivity extends AppCompatActivity implements GoogleApiClie
                                 } else {
                                     Gson gson = new Gson();
 
-                                    final CounterDeviceLoginGetterSetter userObject = gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
+                                    final BADeviceLoginGetterSetter userObject = gson.fromJson(data, BADeviceLoginGetterSetter.class);
                                     editor.putString(CommonString.KEY_USERNAME, userId);
                                     editor.putString(CommonString.KEY_PASSWORD, passwordData);
                                     editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());
@@ -625,7 +616,6 @@ public class TabLoginActivity extends AppCompatActivity implements GoogleApiClie
                                         startActivity(intent);
                                         finish();
                                     }
-
                                 }
                             } catch (Exception e) {
                                 loading.dismiss();
@@ -643,7 +633,6 @@ public class TabLoginActivity extends AppCompatActivity implements GoogleApiClie
                             AlertandMessages.showAlertlogin(TabLoginActivity.this, CommonString.MESSAGE_INTERNET_NOT_AVALABLE + "(" + t.getMessage().toString() + ")");
                         } else {
                             AlertandMessages.showAlertlogin(TabLoginActivity.this, CommonString.MESSAGE_SOCKETEXCEPTION);
-
                         }
                     }
                 });

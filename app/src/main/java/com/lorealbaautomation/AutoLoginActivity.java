@@ -53,6 +53,7 @@ import com.lorealbaautomation.constant.AlertandMessages;
 import com.lorealbaautomation.constant.CommonString;
 import com.lorealbaautomation.dailyactivity.TabLoginActivity;
 import com.lorealbaautomation.gettersetter.LoginGsonGetterSetter;
+import com.lorealbaautomation.gsonGetterSetter.BADeviceLoginGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.CounterDeviceLoginGetterSetter;
 import com.lorealbaautomation.retrofit.PostApi;
 
@@ -747,7 +748,7 @@ public class AutoLoginActivity extends AppCompatActivity implements GoogleApiCli
                                     loading.dismiss();
                                 } else {
                                     Gson gson = new Gson();
-                                    final CounterDeviceLoginGetterSetter userObject = gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
+                                    final BADeviceLoginGetterSetter userObject = gson.fromJson(data, BADeviceLoginGetterSetter.class);
                                     editor.putString(CommonString.KEY_USERNAME, userId);
                                     editor.putString(CommonString.KEY_PASSWORD, password);
                                     editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());

@@ -87,9 +87,10 @@
 
 
         <activity
-            android:name=".EmiLoginActivity"
+            android:name=".DealarBoardActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
@@ -101,7 +102,7 @@
 
 
         <activity
-            android:name=".DealarBoardActivity"
+            android:name=".EmiLoginActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"

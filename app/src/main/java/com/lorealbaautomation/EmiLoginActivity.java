@@ -252,6 +252,7 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
             } else if (requestCode == MY_PERMISSIONS_REQUEST_STORAGE_READ) {
                 checkAppPermission(Manifest.permission.ACCESS_FINE_LOCATION, MY_PERMISSIONS_REQUEST_LOCATION);
             } else {
+              //  AttempLogin();
 
                 // Create a Folder for Images
 
@@ -270,6 +271,7 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
                                 android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
+
 
                 if (checkPlayServices()) {
                     // Building the GoogleApi client
@@ -370,6 +372,18 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
             } else {
                 jsonObject.put("IMEINumber1", "0");
             }
+           /* Latitude
+                    Longitude
+            Appversion
+                    Attmode
+            Networkstatus
+                    Manufacturer
+            ModelNumber
+                    OSVersion
+            CounterId
+                    IMEINumber1*/
+
+
 
             String jsonString = jsonObject.toString();
             try {
@@ -398,7 +412,7 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
 
                                 Gson gson = new Gson();
                                 CounterDeviceLoginGetterSetter userObject= gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
-                                if (userObject.getLOGIN().get(0).getCounterId().equals(0)) {
+                                if (userObject.getCounterDeviceLogin().get(0).getCounterId().equals(0)) {
                                     loading.dismiss();
                                     Intent intent = new Intent(getBaseContext(), CounterLoginActivity.class);
                                     startActivity(intent);
@@ -407,7 +421,7 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
                                 }  else if (data.equalsIgnoreCase(CommonString.KEY_FAILURE)) {
                                     AlertandMessages.showAlertlogin(EmiLoginActivity.this, CommonString.KEY_FAILURE + " Please try again");
                                     loading.dismiss();
-                                } else if (userObject.getLOGIN().get(0).getAppVersion().equals(versionCode)) {
+                                } else if (userObject.getCounterDeviceLogin().get(0).getAppVersion().equals(versionCode)) {
                                    /* loading.dismiss();
                                     editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getLOGIN().get(0).getAppVersion()));
                                     editor.putString(CommonString.KEY_PATH, userObject.getLOGIN().get(0).getAppPath());
@@ -424,10 +438,10 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
                                     String mpin = preferences.getString(CommonString.MPIN, null);
                                     if(mpin!=null){
                                         loading.dismiss();
-                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getLOGIN().get(0).getAppVersion()));
-                                        editor.putString(CommonString.KEY_PATH, userObject.getLOGIN().get(0).getAppPath());
-                                        editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());
-                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getLOGIN().get(0).getCounterId()));
+                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getCounterDeviceLogin().get(0).getAppVersion()));
+                                        editor.putString(CommonString.KEY_PATH, userObject.getCounterDeviceLogin().get(0).getAppPath());
+                                        editor.putString(CommonString.KEY_DATE, userObject.getCounterDeviceLogin().get(0).getVisitDate());
+                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getCounterDeviceLogin().get(0).getCounterId()));
                                         editor.putString(CommonString.KEY_LATITUDE, String.valueOf(lat));
                                         editor.putString(CommonString.KEY_LONGITUDE, String.valueOf(lon));
                                         editor.commit();
@@ -438,6 +452,11 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
                                         finish();
                                     }
                                     else {
+                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getCounterDeviceLogin().get(0).getAppVersion()));
+                                        editor.putString(CommonString.KEY_PATH, userObject.getCounterDeviceLogin().get(0).getAppPath());
+                                        editor.putString(CommonString.KEY_DATE, userObject.getCounterDeviceLogin().get(0).getVisitDate());
+                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getCounterDeviceLogin().get(0).getCounterId()));
+                                        editor.commit();
                                         Intent i = new Intent(context, UserLoginActivity.class);
                                         startActivity(i);
                                         finish();
@@ -576,7 +595,7 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
         }
         imeiNumbers = imei.getDeviceImei();
         getDeviceName();
-
+        AttempLogin();
         try {
             app_ver = String.valueOf(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
 
@@ -585,7 +604,7 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
             e.printStackTrace();
         }
 
-        AttempLogin();
+
     }
 
 }

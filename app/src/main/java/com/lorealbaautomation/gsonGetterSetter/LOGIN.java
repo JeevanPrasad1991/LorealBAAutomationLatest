@@ -6,25 +6,19 @@ import com.google.gson.annotations.SerializedName;
 
 public class LOGIN {
 
-    @SerializedName("CounterId")
+    @SerializedName("Result")
     @Expose
-    private Integer counterId;
+    private Integer result;
     @SerializedName("VisitDate")
     @Expose
     private String visitDate;
-    @SerializedName("AppVersion")
-    @Expose
-    private Integer appVersion;
-    @SerializedName("AppPath")
-    @Expose
-    private String appPath;
 
-    public Integer getCounterId() {
-        return counterId;
+    public Integer getResult() {
+        return result;
     }
 
-    public void setCounterId(Integer counterId) {
-        this.counterId = counterId;
+    public void setResult(Integer result) {
+        this.result = result;
     }
 
     public String getVisitDate() {
@@ -33,22 +27,6 @@ public class LOGIN {
 
     public void setVisitDate(String visitDate) {
         this.visitDate = visitDate;
-    }
-
-    public Integer getAppVersion() {
-        return appVersion;
-    }
-
-    public void setAppVersion(Integer appVersion) {
-        this.appVersion = appVersion;
-    }
-
-    public String getAppPath() {
-        return appPath;
-    }
-
-    public void setAppPath(String appPath) {
-        this.appPath = appPath;
     }
 
 }

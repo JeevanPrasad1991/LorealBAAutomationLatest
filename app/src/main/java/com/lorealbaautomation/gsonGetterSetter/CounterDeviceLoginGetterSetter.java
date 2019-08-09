@@ -7,16 +7,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class CounterDeviceLoginGetterSetter {
 
-    @SerializedName("LOGIN")
+    @SerializedName("CounterDeviceLogin")
     @Expose
-    private List<LOGIN> lOGIN = null;
+    private List<CounterDeviceLogin> counterDeviceLogin = null;
 
-    public List<LOGIN> getLOGIN() {
-        return lOGIN;
+    public List<CounterDeviceLogin> getCounterDeviceLogin() {
+        return counterDeviceLogin;
     }
 
-    public void setLOGIN(List<LOGIN> lOGIN) {
-        this.lOGIN = lOGIN;
+    public void setCounterDeviceLogin(List<CounterDeviceLogin> counterDeviceLogin) {
+        this.counterDeviceLogin = counterDeviceLogin;
     }
+
 
 }

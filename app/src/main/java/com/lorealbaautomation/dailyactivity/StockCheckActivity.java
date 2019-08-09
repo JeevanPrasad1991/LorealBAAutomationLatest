@@ -127,6 +127,7 @@ public class StockCheckActivity extends AppCompatActivity implements View.OnClic
                     lvExp_stock_check.setAdapter(listAdapter);
                     listAdapter.notifyDataSetChanged();
                 }
+
                 break;
             case R.id.axe_spin:
         }
@@ -343,7 +344,7 @@ public class StockCheckActivity extends AppCompatActivity implements View.OnClic
         axe_spin.setOnItemSelectedListener(this);
         sub_axe_spin.setOnItemSelectedListener(this);
         brand_spin.setOnItemSelectedListener(this);
-        sku_spin.setOnItemSelectedListener(this);
+
     }
 
 }

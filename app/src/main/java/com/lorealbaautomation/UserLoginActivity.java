@@ -13,7 +13,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -30,14 +29,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.lorealbaautomation.Database.Lorealba_Database;
 import com.lorealbaautomation.Get_IMEI_number.ImeiNumberClass;
 import com.lorealbaautomation.constant.AlertandMessages;
 import com.lorealbaautomation.constant.CommonString;
 import com.lorealbaautomation.dailyactivity.TabLoginActivity;
+import com.lorealbaautomation.gsonGetterSetter.BADeviceLoginGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.BaListGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.CounterDeviceLoginGetterSetter;
 import com.lorealbaautomation.retrofit.DownloadAllDatawithRetro;
@@ -45,7 +43,6 @@ import com.lorealbaautomation.retrofit.PostApi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -176,7 +173,6 @@ public class UserLoginActivity extends AppCompatActivity implements View.OnClick
         if (bsListData.size()==0){
             UploadDataTask();
         }
-
 
     }
 
@@ -364,7 +360,7 @@ public class UserLoginActivity extends AppCompatActivity implements View.OnClick
                                 } else {
                                     Gson gson = new Gson();
 
-                                    final CounterDeviceLoginGetterSetter userObject = gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
+                                    final BADeviceLoginGetterSetter userObject = gson.fromJson(data, BADeviceLoginGetterSetter.class);
                                     editor.putString(CommonString.KEY_USERNAME, userId);
                                     editor.putString(CommonString.KEY_PASSWORD, passwordData);
                                     editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());

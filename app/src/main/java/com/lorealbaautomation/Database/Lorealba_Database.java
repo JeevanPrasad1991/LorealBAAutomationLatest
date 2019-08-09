@@ -45,7 +45,6 @@ import com.lorealbaautomation.gsonGetterSetter.StockTesterDataGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.StockTesterDatum;
 import com.lorealbaautomation.gsonGetterSetter.TableStructureGetterSetter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,11 +78,10 @@ public class Lorealba_Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             //jeevan
+            db.execSQL(CommonString.CREATE_TABLE_User_Login);
             db.execSQL(CommonString.CREATE_TABLE_COVERAGE_DATA);
             db.execSQL(CommonString.CREATE_TABLE_COUNTER_IMAGE_DATA);
             db.execSQL(CommonString.CREATE_TABLE_GROOMED_IMAGE_DATA);
-            db.execSQL(CommonString.CREATE_TABLE_User_Login);
-
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -3606,8 +3604,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         return sb;
     }
 
-
-
     //upendra
     public ArrayList<BaListGetterSetter> getBAListAllData() {
 
@@ -3664,20 +3660,19 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         return list;
     }
 
-
     public long insertLoginData( LoginGetterSetter loginGetterSetter) {
-       db.delete(CommonString.TABLE_User_Login, " USER_ID" + "='" + loginGetterSetter.getUserId() + "'", null);
+        db.delete(CommonString.TABLE_User_Login, " USER_ID" + "='" + loginGetterSetter.getUserId() + "'", null);
         ContentValues values = new ContentValues();
         long l = 0;
         try {
             db.beginTransaction();
 
-                values.put("USER_ID", loginGetterSetter.getUserId());
-                values.put(CommonString.KEY_VISIT_DATE, loginGetterSetter.getVisitDate());
-                values.put(CommonString.KEY_PASSWORD, loginGetterSetter.getPassword());
-                values.put(CommonString.KEY_MPIN, loginGetterSetter.getMpin());
+            values.put("USER_ID", loginGetterSetter.getUserId());
+            values.put(CommonString.KEY_VISIT_DATE, loginGetterSetter.getVisitDate());
+            values.put(CommonString.KEY_PASSWORD, loginGetterSetter.getPassword());
+            values.put(CommonString.KEY_MPIN, loginGetterSetter.getMpin());
 
-                l = db.insert(CommonString.TABLE_User_Login, null, values);
+            l = db.insert(CommonString.TABLE_User_Login, null, values);
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -3686,8 +3681,6 @@ public class Lorealba_Database extends SQLiteOpenHelper {
         }
         return l;
     }
-
-
 
 
 }

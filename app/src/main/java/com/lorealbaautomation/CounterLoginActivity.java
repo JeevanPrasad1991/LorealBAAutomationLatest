@@ -111,7 +111,9 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_counter);
+
         getViewId();
+
 
     }
     @Override
@@ -401,7 +403,7 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
                                 data = data.substring(1, data.length() - 1).replace("\\", "");
                                 Gson gson = new Gson();
                                 CounterDeviceLoginGetterSetter userObject= gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
-                                if (userObject.getLOGIN().get(0).getCounterId().equals(0)) {
+                                if (userObject.getCounterDeviceLogin().get(0).getCounterId().equals(0)) {
                                     loading.dismiss();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                     builder.setTitle("Parinaam");
@@ -419,7 +421,7 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
                                 }  else if (data.equalsIgnoreCase(CommonString.KEY_FAILURE)) {
                                     AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.KEY_FAILURE + " Please try again");
                                     loading.dismiss();
-                                } else if (userObject.getLOGIN().get(0).getCounterId().equals(-1)) {
+                                } else if (userObject.getCounterDeviceLogin().get(0).getCounterId().equals(-1)) {
 
                                     //AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.KEY_FAILURE + " wrong counter ");
                                     loading.dismiss();
@@ -436,10 +438,10 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
                                     alert.show();
                                     finish();
                                 } else {
-                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getLOGIN().get(0).getAppVersion()));
-                                        editor.putString(CommonString.KEY_PATH, userObject.getLOGIN().get(0).getAppPath());
-                                        editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());
-                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getLOGIN().get(0).getCounterId()));
+                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getCounterDeviceLogin().get(0).getAppVersion()));
+                                        editor.putString(CommonString.KEY_PATH, userObject.getCounterDeviceLogin().get(0).getAppPath());
+                                        editor.putString(CommonString.KEY_DATE, userObject.getCounterDeviceLogin().get(0).getVisitDate());
+                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getCounterDeviceLogin().get(0).getCounterId()));
                                         editor.putString(CommonString.KEY_LATITUDE, String.valueOf(lat));
                                         editor.putString(CommonString.KEY_LONGITUDE, String.valueOf(lon));
                                         editor.commit();
