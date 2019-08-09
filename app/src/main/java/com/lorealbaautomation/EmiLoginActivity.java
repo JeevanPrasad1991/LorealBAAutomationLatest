@@ -20,6 +20,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,9 +37,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.lorealbaautomation.Get_IMEI_number.ImeiNumberClass;
 import com.lorealbaautomation.constant.AlertandMessages;
 import com.lorealbaautomation.constant.CommonString;
+import com.lorealbaautomation.gsonGetterSetter.CounterDeviceLoginGetterSetter;
+import com.lorealbaautomation.password.MPinActivity;
 import com.lorealbaautomation.retrofit.PostApi;
 
 import org.json.JSONException;
@@ -84,7 +89,6 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
-
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 10;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 11;
     private static final int MY_PERMISSIONS_REQUEST_STORAGE_READ = 12;
@@ -95,6 +99,12 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        if (Build.VERSION.SDK_INT > 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         setContentView(R.layout.activity_counter_login);
 
        getViewId();
@@ -385,7 +395,10 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
                             try {
                                 data = response.body().string();
                                 data = data.substring(1, data.length() - 1).replace("\\", "");
-                                if (data.contains("0")) {
+
+                                Gson gson = new Gson();
+                                CounterDeviceLoginGetterSetter userObject= gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
+                                if (userObject.getLOGIN().get(0).getCounterId().equals(0)) {
                                     loading.dismiss();
                                     Intent intent = new Intent(getBaseContext(), CounterLoginActivity.class);
                                     startActivity(intent);
@@ -394,48 +407,48 @@ public class EmiLoginActivity extends AppCompatActivity implements GoogleApiClie
                                 }  else if (data.equalsIgnoreCase(CommonString.KEY_FAILURE)) {
                                     AlertandMessages.showAlertlogin(EmiLoginActivity.this, CommonString.KEY_FAILURE + " Please try again");
                                     loading.dismiss();
-                                } else {
-
-                                    loading.dismiss();
-                                    editor.putString(CommonString.KEY_COUNTER_ID, data);
+                                } else if (userObject.getLOGIN().get(0).getAppVersion().equals(versionCode)) {
+                                   /* loading.dismiss();
+                                    editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getLOGIN().get(0).getAppVersion()));
+                                    editor.putString(CommonString.KEY_PATH, userObject.getLOGIN().get(0).getAppPath());
+                                    editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());
+                                    editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getLOGIN().get(0).getCounterId()));
+                                    editor.putString(CommonString.KEY_LATITUDE, String.valueOf(lat));
+                                    editor.putString(CommonString.KEY_LONGITUDE, String.valueOf(lon));
                                     editor.commit();
                                     Intent intent = new Intent(getBaseContext(), UserLoginActivity.class);
                                     startActivity(intent);
-                                    EmiLoginActivity.this.finish();
-                                    /*if (preferences.getString(CommonString.KEY_VERSION, "").equals(Integer.toString(versionCode))) {
+                                    finish();
+*/
+
+                                    String mpin = preferences.getString(CommonString.MPIN, null);
+                                    if(mpin!=null){
                                         loading.dismiss();
-                                        editor.putString(CommonString.KEY_COUNTER_ID, data);
+                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getLOGIN().get(0).getAppVersion()));
+                                        editor.putString(CommonString.KEY_PATH, userObject.getLOGIN().get(0).getAppPath());
+                                        editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());
+                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getLOGIN().get(0).getCounterId()));
+                                        editor.putString(CommonString.KEY_LATITUDE, String.valueOf(lat));
+                                        editor.putString(CommonString.KEY_LONGITUDE, String.valueOf(lon));
                                         editor.commit();
-                                        Intent intent = new Intent(getBaseContext(), UserLoginActivity.class);
-                                        startActivity(intent);
-                                        EmiLoginActivity.this.finish();
+                                        Intent in = new Intent(getApplicationContext(), MPinActivity.class);
+                                        in.putExtra(CommonString.IS_PASSWORD_CHECK, true);
+                                        startActivity(in);
 
-                                    }else {
-                                        Intent intent = new Intent(getBaseContext(), AutoUpdateActivity.class);
-                                        intent.putExtra(CommonString.KEY_PATH, preferences.getString(CommonString.KEY_PATH, ""));
-                                        startActivity(intent);
                                         finish();
-                                    }*/
-                                    /*LoginGsonGetterSetter userObject = gson.fromJson(data, LoginGsonGetterSetter.class);
-                                    // PUT IN PREFERENCES
-                                   // Crashlytics.setUserIdentifier(userid);
-                                    editor.putString(CommonString.KEY_USERNAME, userid);
-                                    editor.putString(CommonString.KEY_PASSWORD, password);
-                                    editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getResult().get(0).getAppVersion()));
-                                    editor.putString(CommonString.KEY_PATH, userObject.getResult().get(0).getAppPath());
-                                    editor.putString(CommonString.KEY_DATE, userObject.getResult().get(0).getCurrentdate());
-                                    Date initDate = new SimpleDateFormat("MM/dd/yyyy").parse(userObject.getResult().get(0).getCurrentdate());
-                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                                    String parsedDate = formatter.format(initDate);
-                                    editor.putString(CommonString.KEY_USER_TYPE, userObject.getResult().get(0).getRightname());
+                                    }
+                                    else {
+                                        Intent i = new Intent(context, UserLoginActivity.class);
+                                        startActivity(i);
+                                        finish();
+                                    }
 
-                                    editor.putString(CommonString.KEY_YYYYMMDD_DATE, parsedDate);
-                                    editor.putString(CommonString.KEY_NOTICE_BOARD_LINK, userObject.getResult().get(0).getNotice_board());
 
-                                    //date is changed for previous day data
-                                    //editor.putString(CommonString.KEY_DATE, "11/22/2017");
-                                    editor.commit();*/
-
+                                }else {
+                                    Intent intent = new Intent(getBaseContext(), AutoUpdateActivity.class);
+                                    intent.putExtra(CommonString.KEY_PATH, preferences.getString(CommonString.KEY_PATH, ""));
+                                    startActivity(intent);
+                                    finish();
                                 }
 
                             } catch (Exception e) {

@@ -22,6 +22,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -40,9 +42,11 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.lorealbaautomation.Get_IMEI_number.ImeiNumberClass;
 import com.lorealbaautomation.constant.AlertandMessages;
 import com.lorealbaautomation.constant.CommonString;
+import com.lorealbaautomation.gsonGetterSetter.CounterDeviceLoginGetterSetter;
 import com.lorealbaautomation.retrofit.PostApi;
 
 import org.json.JSONException;
@@ -103,6 +107,9 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_counter);
         getViewId();
 
@@ -392,7 +399,9 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
                             try {
                                 data = response.body().string();
                                 data = data.substring(1, data.length() - 1).replace("\\", "");
-                                if (data.contains("0")) {
+                                Gson gson = new Gson();
+                                CounterDeviceLoginGetterSetter userObject= gson.fromJson(data, CounterDeviceLoginGetterSetter.class);
+                                if (userObject.getLOGIN().get(0).getCounterId().equals(0)) {
                                     loading.dismiss();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                     builder.setTitle("Parinaam");
@@ -406,12 +415,11 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
                                             });
                                     AlertDialog alert = builder.create();
                                     alert.show();
-                                  //  finish();
 
                                 }  else if (data.equalsIgnoreCase(CommonString.KEY_FAILURE)) {
                                     AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.KEY_FAILURE + " Please try again");
                                     loading.dismiss();
-                                } else if (data.contains("-1")) {
+                                } else if (userObject.getLOGIN().get(0).getCounterId().equals(-1)) {
 
                                     //AlertandMessages.showAlertlogin(CounterLoginActivity.this, CommonString.KEY_FAILURE + " wrong counter ");
                                     loading.dismiss();
@@ -428,20 +436,16 @@ public class CounterLoginActivity extends AppCompatActivity  implements GoogleAp
                                     alert.show();
                                     finish();
                                 } else {
-                                    if (preferences.getString(CommonString.KEY_VERSION, "").equals(Integer.toString(versionCode))) {
-
-                                        editor.putString(CommonString.KEY_COUNTER_ID, data);
+                                        editor.putString(CommonString.KEY_VERSION, String.valueOf(userObject.getLOGIN().get(0).getAppVersion()));
+                                        editor.putString(CommonString.KEY_PATH, userObject.getLOGIN().get(0).getAppPath());
+                                        editor.putString(CommonString.KEY_DATE, userObject.getLOGIN().get(0).getVisitDate());
+                                        editor.putString(CommonString.KEY_COUNTER_ID, String.valueOf(userObject.getLOGIN().get(0).getCounterId()));
+                                        editor.putString(CommonString.KEY_LATITUDE, String.valueOf(lat));
+                                        editor.putString(CommonString.KEY_LONGITUDE, String.valueOf(lon));
                                         editor.commit();
                                         Intent intent = new Intent(getBaseContext(), UserLoginActivity.class);
                                         startActivity(intent);
-                                        CounterLoginActivity.this.finish();
-
-                                    }else {
-                                        Intent intent = new Intent(getBaseContext(), AutoUpdateActivity.class);
-                                        intent.putExtra(CommonString.KEY_PATH, preferences.getString(CommonString.KEY_PATH, ""));
-                                        startActivity(intent);
                                         finish();
-                                    }
 
                                 }
 

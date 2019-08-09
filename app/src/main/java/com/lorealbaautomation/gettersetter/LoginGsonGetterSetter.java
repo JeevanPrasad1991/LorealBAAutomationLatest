@@ -35,7 +35,6 @@ public class LoginGsonGetterSetter {
         this.todayQuestion = todayQuestion;
     }
 
-
     @SerializedName("Attendance_Status")
     @Expose
     private List<AttendanceStatus> attendanceStatus = null;
@@ -43,5 +42,6 @@ public class LoginGsonGetterSetter {
     public List<AttendanceStatus> getAttendanceStatus() {
         return attendanceStatus;
     }
+
 
 }

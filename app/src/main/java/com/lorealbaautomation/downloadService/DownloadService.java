@@ -1,11 +1,17 @@
 package com.lorealbaautomation.downloadService;
 
 import android.app.IntentService;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.lorealbaautomation.Database.Lorealba_Database;
+import com.lorealbaautomation.constant.CommonString;
+import com.lorealbaautomation.retrofit.DownloadAllDatawithRetro;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,16 +22,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class DownloadService extends IntentService {
-
+    private static final String TAG = "DownloadService";
     public static final int STATUS_RUNNING = 0;
     public static final int STATUS_FINISHED = 1;
     public static final int STATUS_ERROR = 2;
 
-    private static final String TAG = "DownloadService";
 
     public DownloadService() {
         super(DownloadService.class.getName());
@@ -35,12 +42,23 @@ public class DownloadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Service Started!");
         final ResultReceiver receiver = intent.getParcelableExtra("receiver");
-        String url = intent.getStringExtra("url");
+        String url = intent.getStringExtra("Username");
+        String user_name = intent.getStringExtra("Username");
+        String param_1 = intent.getStringExtra("Param1");
+
+       /* intent.putExtra("receiver", mReceiver);
+        intent.putExtra("requestId", 101);
+        intent.putExtra("Username", "testba1");
+        intent.putExtra("Param1", "1");
+        intent.putExtra(CommonString.KEY_DOWNLOAD_INDEX, downloadindex);
+        intent.putExtra("Database", (Serializable) db);*/
+
         Bundle bundle = new Bundle();
         if (!TextUtils.isEmpty(url)) {
             /* Update UI: Download Service is Running */
             receiver.send(STATUS_RUNNING, Bundle.EMPTY);
             try {
+
                 String[] results = downloadData(url);
                 /* Sending result back to activity */
                 if (null != results && results.length > 0) {
@@ -132,4 +150,45 @@ public class DownloadService extends IntentService {
             super(message, cause);
         }
     }
+
+/*
+    public void UploadDataTask(String user_name, String counter_id, Context context, Lorealba_Database db) {
+        try {
+            ArrayList<String> keysList = new ArrayList<>();
+            ArrayList<String> jsonList = new ArrayList<>();
+            ArrayList<String> KeyNames = new ArrayList<>();
+            KeyNames.clear();
+            keysList.clear();
+            keysList.add("Table_Structure");
+            keysList.add("BA_List");
+            keysList.add("Mapping_JourneyPlan");
+            keysList.add("Mapping_CounterGroup_Brand");
+            keysList.add("Product_Master");
+            keysList.add("Mapping_Visibility");
+            keysList.add("Master_Posm");
+
+            if (keysList.size() > 0) {
+                for (int i = 0; i < keysList.size(); i++) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("Downloadtype", keysList.get(i));
+                    jsonObject.put("Username", user_name);
+                    jsonObject.put("Param1", counter_id);
+                    jsonObject.put("Param2", "");
+                    jsonList.add(jsonObject.toString());
+                    KeyNames.add(keysList.get(i));
+                }
+
+                if (jsonList.size() > 0) {
+
+                    DownloadAllDatawithRetro downloadData = new DownloadAllDatawithRetro(context, db, pd, CommonString.TAG_FROM_CURRENT);
+                    downloadData.listSize = jsonList.size();
+                    downloadData.downloadDataUniversalWithoutWait(jsonList, KeyNames, 0, CommonString.DOWNLOAD_ALL_SERVICE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+*/
+
 }

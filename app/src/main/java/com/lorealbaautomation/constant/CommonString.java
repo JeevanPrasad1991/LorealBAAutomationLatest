@@ -8,9 +8,19 @@ import android.os.Environment;
 
 public class CommonString {
     //preference
+    public static final String TAG_FROM = "FROM";
+    public static final String TAG_MODE = "MODE";
+
+    public static final String TAG_FROM_BA = "BA";
+    public static final String MODE_FROM_BA_LOGIN = "BA LOGIN";
+    public static final String MODE_FROM_MA_LOGIN = "MA LOGIN";
+    public static final String MODE_FROM_TBA_LOGIN = "TBA LOGIN";
+    public static final String TAG_FROM_MA = "ME";
+    public static final String TAG_FROM_TBA = "TBA";
     public static final String KEY_USERNAME = "USERNAME";
     public static final String KEY_COUNTER_ID = "COUNTER_ID";
     public static final String KEY_PASSWORD = "PASSWORD";
+    public static final String KEY_MPIN = "MPIN";
     public static final String KEY_STATUS = "STATUS";
     public static final String KEY_QUESTION_CD = "question_cd";
     public static final String KEY_MY_LIBRARY_URL = "http://lorealba.parinaam.in/knowledge/index.html";
@@ -101,6 +111,7 @@ public class CommonString {
             + KEY_COVERAGE_REMARK + " VARCHAR,"
             + KEY_COUNTER_NAME + " VARCHAR,"
             + KEY_REASON + " VARCHAR)";
+
 
     public static final String TABLE_INSERT_AUDIT_OPENINGHEADER_DATA = "AUDIT_OPENINGHEADER_DATA";
 
@@ -324,6 +335,18 @@ public class CommonString {
     public static final String Key_Profile_Image_Url = "Image_Url";
     public static final String Key_Profile_User_Namewith_Designation = "User_With_Designation";
     public static final String Key_Profile_Store_Name = "Profile_Store_Name";
+
+    //upendra
+    public static String IS_PASSWORD_CHECK = "IS_PASSWORD_CHECK";
+    public static String MPIN = "MPIN";
+    public static final int CHANGE_PASSWORD_SERVICE = 12;
+    public static final String TABLE_User_Login = "User_login";
+    public static final String CREATE_TABLE_User_Login = "CREATE TABLE  IF NOT EXISTS "
+            + TABLE_User_Login + " (" + KEY_ID
+            + " INTEGER PRIMARY KEY AUTOINCREMENT ," + KEY_PASSWORD
+            + " VARCHAR,USER_ID VARCHAR, "
+            + KEY_VISIT_DATE + " VARCHAR,"
+            + KEY_MPIN + " VARCHAR)";
 
     public static final String TABLE_COUNTER_IMAGE_DATA = "Table_Counter_Image";
     public static final String CREATE_TABLE_COUNTER_IMAGE_DATA = "CREATE TABLE  IF NOT EXISTS "

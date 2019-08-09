@@ -39,6 +39,7 @@ public class DownloadActivity extends AppCompatActivity {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         userId = preferences.getString(CommonString.KEY_USERNAME, null);
         date = preferences.getString(CommonString.KEY_DATE, "");
+
         downloadindex = preferences.getInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
         setTitle("Download - " + date);
         UploadDataTask();

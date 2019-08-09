@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.lorealbaautomation.constant.CommonString;
 import com.lorealbaautomation.delegates.CoverageBean;
+import com.lorealbaautomation.gettersetter.LoginGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.AttendanceHistory;
 import com.lorealbaautomation.gsonGetterSetter.AuditQuestion;
 import com.lorealbaautomation.gsonGetterSetter.BaListGetterSetter;
@@ -44,6 +45,7 @@ import com.lorealbaautomation.gsonGetterSetter.StockTesterDataGetterSetter;
 import com.lorealbaautomation.gsonGetterSetter.StockTesterDatum;
 import com.lorealbaautomation.gsonGetterSetter.TableStructureGetterSetter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +82,8 @@ public class Lorealba_Database extends SQLiteOpenHelper {
             db.execSQL(CommonString.CREATE_TABLE_COVERAGE_DATA);
             db.execSQL(CommonString.CREATE_TABLE_COUNTER_IMAGE_DATA);
             db.execSQL(CommonString.CREATE_TABLE_GROOMED_IMAGE_DATA);
+            db.execSQL(CommonString.CREATE_TABLE_User_Login);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -3601,6 +3605,89 @@ public class Lorealba_Database extends SQLiteOpenHelper {
 
         return sb;
     }
+
+
+
+    //upendra
+    public ArrayList<BaListGetterSetter> getBAListAllData() {
+
+        ArrayList<BaListGetterSetter> list = new ArrayList<>();
+        Cursor dbcursor = null;
+        try {
+            dbcursor = db.rawQuery("SELECT * FROM BA_List ", null);
+
+            if (dbcursor != null) {
+                dbcursor.moveToFirst();
+                while (!dbcursor.isAfterLast()) {
+                    BaListGetterSetter ch = new BaListGetterSetter();
+                    ch.setEmpId(Integer.valueOf(dbcursor.getString(dbcursor.getColumnIndexOrThrow("EmpId"))));
+                    ch.setUserName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("UserName")));
+                    ch.setVisitDate(dbcursor.getString(dbcursor.getColumnIndexOrThrow("VisitDate")));
+                    ch.setDesignationId(Integer.valueOf(dbcursor.getString(dbcursor.getColumnIndexOrThrow("DesignationId"))));
+                    list.add(ch);
+                    dbcursor.moveToNext();
+                }
+                dbcursor.close();
+                return list;
+            }
+        } catch (Exception e) {
+            return list;
+        }
+        return list;
+    }
+    public ArrayList<BaListGetterSetter> getBAListData(String  userType) {
+
+        ArrayList<BaListGetterSetter> list = new ArrayList<>();
+        Cursor dbcursor = null;
+        try {
+            dbcursor = db.rawQuery("SELECT * FROM BA_List  WHERE DesignationName ='" + userType + "'", null);
+
+            if (dbcursor != null) {
+                dbcursor.moveToFirst();
+                while (!dbcursor.isAfterLast()) {
+                    BaListGetterSetter ch = new BaListGetterSetter();
+                    ch.setEmpId(Integer.valueOf(dbcursor.getString(dbcursor.getColumnIndexOrThrow("EmpId"))));
+                    ch.setUserName(dbcursor.getString(dbcursor.getColumnIndexOrThrow("UserName")));
+                    ch.setVisitDate(dbcursor.getString(dbcursor.getColumnIndexOrThrow("VisitDate")));
+                    ch.setDesignationId(Integer.valueOf(dbcursor.getString(dbcursor.getColumnIndexOrThrow("DesignationId"))));
+                    list.add(ch);
+                    dbcursor.moveToNext();
+                }
+                dbcursor.close();
+                return list;
+            }
+        } catch (Exception e) {
+
+            return list;
+        }
+
+        return list;
+    }
+
+
+    public long insertLoginData( LoginGetterSetter loginGetterSetter) {
+       db.delete(CommonString.TABLE_User_Login, " USER_ID" + "='" + loginGetterSetter.getUserId() + "'", null);
+        ContentValues values = new ContentValues();
+        long l = 0;
+        try {
+            db.beginTransaction();
+
+                values.put("USER_ID", loginGetterSetter.getUserId());
+                values.put(CommonString.KEY_VISIT_DATE, loginGetterSetter.getVisitDate());
+                values.put(CommonString.KEY_PASSWORD, loginGetterSetter.getPassword());
+                values.put(CommonString.KEY_MPIN, loginGetterSetter.getMpin());
+
+                l = db.insert(CommonString.TABLE_User_Login, null, values);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception ex) {
+
+        }
+        return l;
+    }
+
+
 
 
 }

@@ -21,6 +21,9 @@ public interface PostApi {
     @POST("CounterDeviceLogin")
     Call<ResponseBody> getLogindetail(@Body RequestBody request);
 
+    @POST("BADeviceLogin")
+    Call<ResponseBody> getLoginUserdetail(@Body RequestBody request);
+
     @POST("DownloadJson")
     Call<String> getDownloadAll(@Body RequestBody request);
 

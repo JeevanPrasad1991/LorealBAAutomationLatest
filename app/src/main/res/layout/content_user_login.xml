@@ -18,7 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="150dp"
             android:layout_marginBottom="50dp"
             android:orientation="vertical">
 
@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="COUNTER LOGIN"
+                android:text="USER LOGIN"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -46,7 +46,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dip"
+            android:layout_margin="20dip"
             android:background="@drawable/card_bg"
             android:orientation="vertical">
 
@@ -55,11 +55,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="20dp"
                 android:layout_marginRight="5dp"
                 android:orientation="vertical"
                 android:paddingBottom="10dip">
 
+<!--
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -108,9 +108,32 @@
                             android:textSize="14sp" />
 
 
+
                     </LinearLayout>
 
                 </LinearLayout>
+-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dip"
+                    android:visibility="gone"
+                    android:background="@drawable/edit_text_border"
+                    android:orientation="horizontal"
+                    android:padding="5dip">
+
+
+                    <Spinner
+                        android:id="@+id/sp_present"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dip"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textSize="12sp"></Spinner>
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -118,6 +141,7 @@
                     android:layout_margin="5dip"
                     android:background="@drawable/edit_text_border"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     android:padding="5dip"
                     android:weightSum="4">
 
@@ -133,7 +157,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
-                            android:background="@mipmap/counter_name"
+                            android:background="@mipmap/password"
                             android:padding="10dp"
                             android:scaleType="fitXY" />
 
@@ -145,23 +169,22 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="3"
+
                         android:orientation="horizontal">
 
                         <EditText
-
+                            android:id="@+id/user_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dip"
                             android:background="@android:color/transparent"
-                            android:hint="COUNTER ID"
-                            android:inputType="number"
+                            android:hint="PASSWORD"
                             android:singleLine="true"
                             android:textColorHint="@android:color/black"
                             android:textSize="14sp" />
 
 
                     </LinearLayout>
-
 
                 </LinearLayout>
 
@@ -176,6 +199,7 @@
                     android:weightSum="3">
 
                     <LinearLayout
+                        android:id="@+id/lay_ba"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -192,6 +216,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/lay_ma"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -208,6 +233,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/lay_tba"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -246,7 +272,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="BA"
-                            android:textSize="14sp"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
 
 
@@ -262,8 +288,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="MA"
-                            android:textSize="14sp"
+                            android:text="ME"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
 
 
@@ -280,7 +306,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TBA"
-                            android:textSize="14sp"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -293,6 +319,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dip"
+                    android:visibility="gone"
                     android:layout_marginTop="20dip"
                     android:layout_marginRight="20dip"
                     android:background="@drawable/rouded_corner"
@@ -304,6 +331,11 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
+
+
+
 
     <RelativeLayout
         android:id="@+id/linear"
@@ -629,6 +661,4 @@
 
         </LinearLayout>
     -->
-
-
 </RelativeLayout>

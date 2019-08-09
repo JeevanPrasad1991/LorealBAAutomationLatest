@@ -66,6 +66,10 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
     String _UserId, date, app_ver;
     int from;
 
+    public DownloadAllDatawithRetro(Context context) {
+        this.context = context;
+    }
+
     public DownloadAllDatawithRetro(Context context, Lorealba_Database db, ProgressDialog pd, int from) {
         this.context = context;
         this.db = db;
@@ -601,6 +605,118 @@ public class DownloadAllDatawithRetro extends ReferenceVariablesForDownloadActiv
         } catch (IOException e) {
             Crashlytics.logException(e);
             e.printStackTrace();
+        }
+    }
+
+
+
+
+
+    public void downloadDataUniversalBa(final ArrayList<String> jsonStringList, final ArrayList<String> KeyNames, int downloadindex, int type) {
+        status = 0;
+        isvalid = false;
+        final String[] data_global = {""};
+        String jsonString = "", KeyName = "";
+        int jsonIndex = 0;
+
+        if (jsonStringList.size() > 0) {
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().readTimeout(20, TimeUnit.SECONDS).writeTimeout(20, TimeUnit.SECONDS).connectTimeout(20, TimeUnit.SECONDS).build();
+            jsonString = jsonStringList.get(downloadindex);
+            KeyName = KeyNames.get(downloadindex);
+            jsonIndex = downloadindex;
+
+            RequestBody jsonData = RequestBody.create(MediaType.parse("application/json"), jsonString);
+            adapter = new Retrofit.Builder().baseUrl(CommonString.URL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build();
+            PostApi api = adapter.create(PostApi.class);
+            Call<String> call = api.getDownloadAll(jsonData);
+            final int[] finalJsonIndex = {jsonIndex};
+            final String finalKeyName = KeyName;
+
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    String responseBody = response.body();
+                    String data = null;
+                    if (responseBody != null && response.isSuccessful()) {
+                        try {
+                            data = response.body();
+                            if (data.equals("")) {
+                                data_global[0] = "";
+                            } else {
+                                data_global[0] = data;
+                                if (finalKeyName.equalsIgnoreCase("Table_Structure")) {
+                                    editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
+                                    editor.apply();
+                                    tableStructureObj = new Gson().fromJson(data, TableStructureGetterSetter.class);
+                                    String isAllTableCreated = createTable(tableStructureObj);
+
+                                    if (isAllTableCreated != CommonString.KEY_SUCCESS) {
+                                        AlertandMessages.showAlert((Activity) context, isAllTableCreated + " not created", true);
+                                    }
+                                } else {
+                                    editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
+                                    editor.apply();
+                                    switch (finalKeyName) {
+                                        case "BA_List":
+                                            if (!data.contains("No Data")) {
+                                                baListObject = new Gson().fromJson(data, JCPGetterSetter.class);
+                                                if (baListObject != null && !db.insertBalistData(baListObject)) {
+                                                    AlertandMessages.showSnackbarMsg(context, "Ba List data not saved");
+                                                }
+                                            } else {
+                                                throw new java.lang.Exception();
+                                            }
+                                            break;
+
+                                    }
+                                }
+                            }
+
+                            finalJsonIndex[0]++;
+                            if (finalJsonIndex[0] != KeyNames.size()) {
+                                editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
+                                editor.apply();
+                                downloadDataUniversalBa(jsonStringList, KeyNames, finalJsonIndex[0], CommonString.DOWNLOAD_ALL_SERVICE);
+                            } else {
+                                /*editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
+                                editor.apply();
+                                new DownloadImageTask(context, promotionMasterObject).execute();*/
+
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
+                            editor.apply();
+                            // pd.dismiss();
+                            AlertandMessages.showAlert((Activity) context, finalKeyName + " Data not found ", true);
+                        }
+                    } else {
+                        editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, finalJsonIndex[0]);
+                        editor.apply();
+                        //pd.dismiss();
+                        AlertandMessages.showAlert((Activity) context, "Error in downloading Data at " + finalKeyName, true);
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    isvalid = true;
+                    // pd.dismiss();
+                    if (t != null) {
+                        AlertandMessages.showAlert((Activity) context, CommonString.MESSAGE_INTERNET_NOT_AVALABLE + "(" + t.toString() + ")", true);
+                    } else {
+                        AlertandMessages.showAlert((Activity) context, CommonString.MESSAGE_INTERNET_NOT_AVALABLE, true);
+                    }
+                }
+            });
+        } else {
+
+            editor.putInt(CommonString.KEY_DOWNLOAD_INDEX, 0);
+            editor.apply();
+            // pd.setMessage("Downloading Images");
+          //  new DownloadImageTask(context, promotionMasterObject).execute();
         }
     }
 

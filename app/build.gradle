@@ -53,5 +53,4 @@ dependencies {
     implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
     implementation project(path: ':annca')
 }
-
 apply plugin: 'com.google.gms.google-services'
